@@ -1,0 +1,48 @@
+def playfield():
+    board = []
+    for i in range(3):
+        row = [(' ') for e in range(3)]
+        board.append(row)
+    
+    gamestate = print (*board, sep='\n')
+    
+    p1 = 'x'
+    p2 = 'o'
+ 
+    move = 0
+    
+    while move < 9:
+        
+        player = input("Choose your coordinates[num,num]..")
+        player = player.split(',')
+        n = int(player[0]) - 1
+        m = int(player[1]) - 1
+        
+        if board[n][m] != p1 and board[n][m] != p2:
+            move += 1
+            if move % 2 != 0:
+                board[n][m] = 'x'
+            else:
+                board[n][m] = 'o'
+        else:
+            print ("Spot taken. ")
+        
+        row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
+        col_w = len([board[i][m] for i in range(3) if board[i][m] == board[n][m]])
+        diag1_w = len(set([board[0][0], board[1][1], board[2][2]]))
+        diag2_w = len(set([board[0][2], board[1][1], board[2][0]]))
+        diag = diag1_w + diag2_w
+        
+        if row_w == 3 or col_w == 3 or diag == 2:
+            print (*board, sep='\n')
+            if board[n][m] == p1:
+                print ("P1 WINS!")
+            else:
+                print ("P2 WINS!")
+            break
+
+        
+        print (*board, sep='\n')
+        print (move)
+
+print (playfield())
