@@ -3,17 +3,27 @@ def playfield():
     for i in range(3):
         row = [(' ') for e in range(3)]
         board.append(row)
+    print (*board, sep='\n')
     
-    gamestate = print (*board, sep='\n')
+    txt = "Hello PLAYER_1! "
+    txt_1 = "PLAYER_1, "
+    txt_2 = "PLAYER_2, "
     
     p1 = 'x'
     p2 = 'o'
- 
     move = 0
     
-    while move < 9:
+    while True:
         
-        player = input("Choose your coordinates[num,num]..")
+        if move == 9:
+            print (*board, sep='\n')
+            repeat = input("Its a tie! Do you want to play again? If yes type Y/y/yes, if not, type anything else")
+            if repeat.lower() == "y" or repeat.lower() == "yes":
+              playfield()
+            else:
+                break
+        
+        player = input(txt + "Please choose your coordinates[num,num](1=min,3=max).")
         player = player.split(',')
         n = int(player[0]) - 1
         m = int(player[1]) - 1
@@ -21,26 +31,27 @@ def playfield():
         if board[n][m] != p1 and board[n][m] != p2:
             move += 1
             if move % 2 != 0:
-                board[n][m] = 'x'
+                board[n][m] = p1
+                txt = txt_2
             else:
-                board[n][m] = 'o'
+                board[n][m] = p2
+                txt = txt_1
         else:
             print ("Spot taken. ")
         
         row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
         col_w = len([board[i][m] for i in range(3) if board[i][m] == board[n][m]])
-        diag1_w = len(set([board[0][0], board[1][1], board[2][2]]))
-        diag2_w = len(set([board[0][2], board[1][1], board[2][0]]))
-        diag = diag1_w + diag2_w
         
-        if row_w == 3 or col_w == 3 or diag == 2:
+        diag1_w = len([board[i][i] for i in range(3) if board[i][i] == board[n][m]])
+        diag2_w = len([board[i][2 - i] for i in range(3) if board[i][2 - i] == board[n][m]])
+        
+        if row_w == 3 or col_w == 3 or diag1_w == 3 or diag2_w == 3:
             print (*board, sep='\n')
             if board[n][m] == p1:
                 print ("P1 WINS!")
             else:
                 print ("P2 WINS!")
             break
-
         
         print (*board, sep='\n')
         print (move)
