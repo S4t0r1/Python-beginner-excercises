@@ -6,6 +6,10 @@
 # Additional features like error and exception handling and player score 
 # will be using a new function..
 # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# This function can applied to any gameboard size by applying the following values:
+# range(3), 3 -> range(num_wsh=number of intended square shape gameboard size, must be an int!), num_wsh
+# 9 -> num_wsh ** 2
+# 2 -> len(row) - 1
 
 def playfield():
     board = []
