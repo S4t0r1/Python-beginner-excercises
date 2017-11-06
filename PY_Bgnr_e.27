@@ -1,3 +1,12 @@
+# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Excercise n.27 from the python begginer excercises on:
+# http://www.practicepython.org/solution/2016/03/17/27-tic-tac-toe-draw-solutions.html
+# I approched this one for the sake of an experiment and
+# managed to establish the whole Tic Tac Toe game into one function..
+# Additional features like error and exception handling and player score 
+# will be using a new function..
+# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
 def playfield():
     board = []
     for i in range(3):
@@ -6,16 +15,12 @@ def playfield():
     print (*board, sep='\n')
     
     txt = "Hello PLAYER_1! "
-    txt_1 = "PLAYER_1, "
-    txt_2 = "PLAYER_2, "
-    
     p1 = 'x'
     p2 = 'o'
     move = 0
     
     while True:
-        
-        if move == 9:
+         if move == 9:
             print (*board, sep='\n')
             repeat = input("Its a tie! Do you want to play again? If yes type Y/y/yes, if not, type anything else")
             if repeat.lower() == "y" or repeat.lower() == "yes":
@@ -32,16 +37,15 @@ def playfield():
             move += 1
             if move % 2 != 0:
                 board[n][m] = p1
-                txt = txt_2
+                txt = "PLAYER_2, "
             else:
                 board[n][m] = p2
-                txt = txt_1
+                txt = "PLAYER_1, "
         else:
             print ("Spot taken. ")
         
         row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
         col_w = len([board[i][m] for i in range(3) if board[i][m] == board[n][m]])
-        
         diag1_w = len([board[i][i] for i in range(3) if board[i][i] == board[n][m]])
         diag2_w = len([board[i][2 - i] for i in range(3) if board[i][2 - i] == board[n][m]])
         
