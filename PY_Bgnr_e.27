@@ -6,7 +6,7 @@
 # Additional features like error and exception handling and player score 
 # will be using a new function..
 # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-# This function can applied to any gameboard size by applying the following values:
+# This function can be applied to any gameboard size by applying the following values:
 # range(3), 3 -> range(num_wsh=number of intended square shape gameboard size, must be an int!), num_wsh
 # 9 -> num_wsh ** 2
 # 2 -> len(row) - 1
@@ -24,7 +24,7 @@ def playfield():
     move = 0
     
     while True:
-         if move == 9:
+        if move == 9:
             print (*board, sep='\n')
             repeat = input("Its a tie! Do you want to play again? If yes type Y/y/yes, if not, type anything else")
             if repeat.lower() == "y" or repeat.lower() == "yes":
@@ -48,20 +48,20 @@ def playfield():
         else:
             print ("Spot taken. ")
         
-        row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
-        col_w = len([board[i][m] for i in range(3) if board[i][m] == board[n][m]])
-        diag1_w = len([board[i][i] for i in range(3) if board[i][i] == board[n][m]])
-        diag2_w = len([board[i][2 - i] for i in range(3) if board[i][2 - i] == board[n][m]])
-        
-        if row_w == 3 or col_w == 3 or diag1_w == 3 or diag2_w == 3:
-            print (*board, sep='\n')
-            if board[n][m] == p1:
-                print ("P1 WINS!")
-            else:
-                print ("P2 WINS!")
-            break
+        if move >= 5:
+            row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
+            col_w = len([board[i][m] for i in range(3) if board[i][m] == board[n][m]])
+            diag1_w = len([board[i][i] for i in range(3) if board[i][i] == board[n][m]])
+            diag2_w = len([board[i][2 - i] for i in range(3) if board[i][2 - i] == board[n][m]])
+            if row_w == 3 or col_w == 3 or diag1_w == 3 or diag2_w == 3:
+                print (*board, sep='\n')
+                if board[n][m] == p1:
+                    print ("PLAYER_1 WINS!")
+                else:
+                    print ("PLAYER_2 WINS!")
+                break
         
         print (*board, sep='\n')
         print (move)
 
-print (playfield())
+playfield()
