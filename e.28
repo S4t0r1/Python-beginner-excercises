@@ -1,0 +1,84 @@
+#The 1st example is for a number of 3 inputs explicitly..
+#The 2nd and 3rd example can be used for any number of inputs..
+
+
+# *** Example 1 ***
+
+
+def max_1(lst):
+    a = lst[0]
+    b = lst[1]
+    c = lst[2]
+    txt = "is the highest!"
+    if a >= b and a > c:
+        print(a, txt)
+    elif b >= c and b > a:
+        print(b, txt)
+    else:
+        if c >= a and c > b:
+            print(c, txt)
+
+def main():
+    count = 0
+    lst = []
+    while count < 3:
+        count += 1
+        prompt = int(input("Number please.."))
+        lst.append(prompt)
+    max_1(lst)
+
+if __name__ == "__main__":
+    main()
+
+main()
+
+
+#______________________________________________________________________
+# *** Example 2 ***
+
+
+def max_2(lst):
+    maxnum = sorted(lst)[-1]
+    print(maxnum, "is the highest!")
+
+def main():
+    count = 0
+    lst = []
+    welcome = int(input("Welcome! Choose the number of inputs: \n"))
+    while count < int(welcome):
+        count += 1
+        prompt = int(input("Number please.."))
+        lst.append(prompt)
+    max_2(lst)
+
+if __name__ == "__main__":
+    main()
+
+main()
+
+
+#______________________________________________________________________
+# *** Example 3 ***
+
+
+def max_1(lst):
+    maxnum = lst[0]
+    for x in lst:
+        if x > maxnum:
+            maxnum = x
+    print(maxnum, "is the highest!")
+
+def main():
+    count = 0
+    lst = []
+    welcome = int(input("Welcome! Choose the number of inputs: \n"))
+    while count < int(welcome):
+        count += 1
+        prompt = int(input("Number please.."))
+        lst.append(prompt)
+    max_1(lst)
+
+if __name__ == "__main__":
+    main()
+
+main()
