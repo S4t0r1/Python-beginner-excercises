@@ -1,0 +1,66 @@
+def check_turn(move,txt,pick):
+    if move % 2 != 0:
+        pick = 'x'
+        txt = "PLAYER_2, "
+    else:
+        pick = 'o'
+        txt = "PLAYER_1, "
+    return (pick,txt)
+
+
+def ask_player(txt):
+    player = input(txt + "Please choose your coordinates[num,num](1=min,3=max).")
+    player = player.split(',')
+    return player
+
+def check_row(board,n,m):
+    row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
+    return row_w
+
+def check_col(board,n,m):
+    col_w = len([board[i][m] for i in range(3) if board[i][m] == board[n][m]])
+    return col_w
+
+
+def check_diag1(board,n,m):
+    diag1_w = len([board[i][i] for i in range(3) if board[i][i] == board[n][m]])
+    return diag1_w
+
+
+def check_diag2(board,n,m):
+    diag2_w = len([board[i][2 - i] for i in range(3) if board[i][2 - i] == board[n][m]])
+    return diag2_w
+
+
+def check_win(pick,row_w,col_w,diag1_w,diag2_w):
+    if row_w == 3 or col_w == 3 or diag1_w == 3 or diag2_w == 3:
+        if pick == 'x':
+            print ("PLAYER_1 WINS!")
+        else:
+            print ("PLAYER_2 WINS!")
+        return True
+
+
+def used_spot(board,n,m):
+    if board[n][m] == 'x' and board[n][m] == 'o':
+        print ("Spot taken. ")
+        return True
+
+
+def main():
+    move = 0
+    txt = "Hello PLAYER_1! "
+    row = [(' ') for e in range(3)]
+    board = [row for e in range(3)]
+    print (*board, sep='\n')
+    
+    while True:
+        player = ask_player(txt)
+        n = int(player[0]) - 1
+        m = int(player[1]) - 1
+        pick = board[n][m]
+        check_turn(move,txt,pick)
+        move += 1
+        print (*board, sep='\n')
+
+main()
