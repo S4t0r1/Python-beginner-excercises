@@ -1,17 +1,24 @@
-def check_turn(move,txt,pick):
-    if move % 2 != 0:
-        pick = 'x'
-        txt = "PLAYER_2, "
+def txt_display(move):
+    if move % 2 == 0:
+        txt = 'PLAYER_1: '
     else:
-        pick = 'o'
-        txt = "PLAYER_1, "
-    return (pick,txt)
+        txt = 'PLAYER_2: '
+    return txt
 
 
 def ask_player(txt):
     player = input(txt + "Please choose your coordinates[num,num](1=min,3=max).")
     player = player.split(',')
     return player
+
+
+def player_symbol(move,board,n,m):
+    if move % 2 == 0:
+        board[n][m] = 'o'
+    else:
+        board[n][m] = 'x'
+    return board[n][m]
+
 
 def check_row(board,n,m):
     row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
@@ -33,34 +40,74 @@ def check_diag2(board,n,m):
 
 
 def check_win(pick,row_w,col_w,diag1_w,diag2_w):
+    p1_score = 0
+    p1_score = 0
     if row_w == 3 or col_w == 3 or diag1_w == 3 or diag2_w == 3:
         if pick == 'x':
             print ("PLAYER_1 WINS!")
+            return 1
         else:
             print ("PLAYER_2 WINS!")
+            return 2
         return True
 
 
 def used_spot(board,n,m):
-    if board[n][m] == 'x' and board[n][m] == 'o':
-        print ("Spot taken. ")
+    if board[n][m] == 'x' or board[n][m] == 'o':
+        return True
+    else:
+        pass
+
+def play_again(board):
+    repeat = input("Do you want to play again? If yes type Y/y/yes, if not, type anything else")
+    if repeat.lower() == "y" or repeat.lower() == "yes":
         return True
 
 
 def main():
     move = 0
     txt = "Hello PLAYER_1! "
-    row = [(' ') for e in range(3)]
-    board = [row for e in range(3)]
-    print (*board, sep='\n')
+    board = []
+    for i in range(3):
+        row = [(' ') for e in range(3)]
+        board.append(row)
+    print(*board, sep='\n')
     
     while True:
         player = ask_player(txt)
         n = int(player[0]) - 1
         m = int(player[1]) - 1
+        
+        if used_spot(board,n,m) is not True:
+            move += 1
+            board[n][m] = player_symbol(move,board,n,m)
+        else:
+            print("Spot taken. ")
+        
         pick = board[n][m]
-        check_turn(move,txt,pick)
-        move += 1
-        print (*board, sep='\n')
+        if move >= 5:
+            row_w = check_row(board,n,m)
+            col_w = check_col(board,n,m)
+            diag1_w = check_diag1(board,n,m)
+            diag2_w = check_diag2(board,n,m)
+            if check_win(pick,row_w,col_w,diag1_w,diag2_w) == True:
+                print(*board, sep='\n')
+                repeat = play_again(board)
+                if repeat == True:
+                  move = 0 
+                  continue
+                else:
+                    return True
+            
+            if move == 9:
+                print("Its a tie!", repeat)
+                if repeat == True:
+                    move = 0
+                    continue
+                else:
+                    return True
+
+        txt = txt_display(move)
+        print(*board, sep='\n')
 
 main()
