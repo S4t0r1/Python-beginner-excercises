@@ -1,3 +1,11 @@
+def build_gameboard():
+    board = []
+    for i in range(3):
+        row = [(' ') for e in range(3)]
+        board.append(row)
+    return board
+
+
 def txt_display(move):
     if move % 2 == 0:
         txt = 'PLAYER_1: '
@@ -27,17 +35,18 @@ def used_spot(board,n,m):
         pass
 
 
-def check_win(board,n,m):
-    row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
-    col_w = len([board[i][m] for i in range(3) if board[i][m] == board[n][m]])
-    diag1_w = len([board[i][i] for i in range(3) if board[i][i] == board[n][m]])
-    diag2_w = len([board[i][2 - i] for i in range(3) if board[i][2 - i] == board[n][m]])
-    if row_w == 3 or col_w == 3 or diag1_w == 3 or diag2_w == 3:
-        if board[n][m] == 'x':
-            print ("PLAYER_1 WINS!")
-        else:
-            print ("PLAYER_2 WINS!")
-        return True
+def check_win(move,board,n,m):
+    if move >= 5:
+        row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
+        col_w = len([board[i][m] for i in range(3) if board[i][m] == board[n][m]])
+        diag1_w = len([board[i][i] for i in range(3) if board[i][i] == board[n][m]])
+        diag2_w = len([board[i][2 - i] for i in range(3) if board[i][2 - i] == board[n][m]])
+        if row_w == 3 or col_w == 3 or diag1_w == 3 or diag2_w == 3:
+            if board[n][m] == 'x':
+                print ("PLAYER_1 WINS!")
+            else:
+                print ("PLAYER_2 WINS!")
+            return True
 
 
 def play_again():
@@ -46,21 +55,10 @@ def play_again():
         return True
 
 
-def build_gameboard():
-    board = []
-    for i in range(3):
-        row = [(' ') for e in range(3)]
-        board.append(row)
-    return board
-
-
 def main():
     move = 0
     txt = "Hello PLAYER_1! "
-    board = []
-    for i in range(3):
-        row = [(' ') for e in range(3)]
-        board.append(row)
+    board = build_gameboard()
     
     while True:
         print(*board, sep='\n')
@@ -74,8 +72,7 @@ def main():
         else:
             print("Spot taken. ")
         
-        if move >= 5:
-            if check_win(board,n,m) is True or move == 9:
+        if check_win(move,board,n,m) is True or move == 9:
                 print(*board, sep='\n')
                 repeat = play_again()
                 if repeat == True:
