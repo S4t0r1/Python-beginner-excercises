@@ -41,16 +41,13 @@ def check_win(move,board,n,m):
                 print ("PLAYER_2 WINS!")
             return True
 
-def player_score(board,n,m,rounds):
-    p1_score = 0
-    p2_score = 0
-    rounds = 0
+def player_score(board,n,m):
+    winner = 0
     if board[n][m] == 'x':
-        p1_score += 1
+        winner = 1
     else:
-        p2_score += 1
-    print('(p1)',p1_score,':','(p2)',p2_score)
-    
+        winner = 2
+    return winner
 
 def play_again():
     repeat = input("Do you want to play again? If yes type Y/y/yes, if not, type anything else: ")
@@ -60,11 +57,13 @@ def play_again():
 
 def main():
     move = 0
+    p1_score = 0
+    p2_score = 0
     txt = "Hello PLAYER_1! "
     board = build_gameboard()
-    rounds = 0
     
     while True:
+        print('(p1)',p1_score,':','(p2)',p2_score)
         print(*board, sep='\n')
         player = ask_player(txt)
         n = int(player[0]) - 1
@@ -78,8 +77,12 @@ def main():
         
         if (check_win(move,board,n,m) == (1 or 2)) or move == 9:
                 print(*board, sep='\n')
-                player_score(board,n,m,rounds)
-                rounds += 1
+                if player_score(board,n,m) == 1:
+                    p1_score += 1
+                else:
+                    p2_score += 1
+                print('(p1)',p1_score,':','(p2)',p2_score)
+                
                 repeat = play_again()
                 if repeat == True:
                     move = 0
