@@ -5,7 +5,6 @@ def build_gameboard():
         board.append(row)
     return board
 
-
 def txt_display(move):
     if move % 2 == 0:
         txt = 'PLAYER_1: '
@@ -13,12 +12,10 @@ def txt_display(move):
         txt = 'PLAYER_2: '
     return txt
 
-
 def ask_player(txt):
     player = input(txt + "Please choose your coordinates[num,num](1=min,3=max).")
     player = player.split(',')
     return player
-
 
 def player_symbol(move,board,n,m):
     if move % 2 == 0:
@@ -27,13 +24,9 @@ def player_symbol(move,board,n,m):
         board[n][m] = 'x'
     return board[n][m]
 
-
 def used_spot(board,n,m):
     if board[n][m] == 'x' or board[n][m] == 'o':
         return True
-    else:
-        pass
-
 
 def check_win(move,board,n,m):
     if move >= 5:
@@ -48,9 +41,19 @@ def check_win(move,board,n,m):
                 print ("PLAYER_2 WINS!")
             return True
 
+def player_score(board,n,m,rounds):
+    p1_score = 0
+    p2_score = 0
+    rounds = 0
+    if board[n][m] == 'x':
+        p1_score += 1
+    else:
+        p2_score += 1
+    print('(p1)',p1_score,':','(p2)',p2_score)
+    
 
 def play_again():
-    repeat = input("Do you want to play again? If yes type Y/y/yes, if not, type anything else")
+    repeat = input("Do you want to play again? If yes type Y/y/yes, if not, type anything else: ")
     if repeat.lower() == "y" or repeat.lower() == "yes":
         return True
 
@@ -59,6 +62,7 @@ def main():
     move = 0
     txt = "Hello PLAYER_1! "
     board = build_gameboard()
+    rounds = 0
     
     while True:
         print(*board, sep='\n')
@@ -72,8 +76,10 @@ def main():
         else:
             print("Spot taken. ")
         
-        if check_win(move,board,n,m) is True or move == 9:
+        if (check_win(move,board,n,m) == (1 or 2)) or move == 9:
                 print(*board, sep='\n')
+                player_score(board,n,m,rounds)
+                rounds += 1
                 repeat = play_again()
                 if repeat == True:
                     move = 0
