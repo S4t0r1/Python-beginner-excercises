@@ -91,7 +91,7 @@ def main():
                     txt = txt_display(move)
                     continue
                 else:
-                    return True
+                    break
         
         txt = txt_display(move)
 
