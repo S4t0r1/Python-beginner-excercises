@@ -36,9 +36,9 @@ def check_win(move,board,n,m):
         diag2_w = len([board[i][2 - i] for i in range(3) if board[i][2 - i] == board[n][m]])
         if row_w == 3 or col_w == 3 or diag1_w == 3 or diag2_w == 3:
             if board[n][m] == 'x':
-                print ("PLAYER_1 WINS!")
+                print ("PLAYER_1 WINS!",'\n')
             else:
-                print ("PLAYER_2 WINS!")
+                print ("PLAYER_2 WINS!",'\n')
             return True
 
 def player_score(board,n,m):
@@ -54,6 +54,7 @@ def play_again():
     if repeat.lower() == "y" or repeat.lower() == "yes":
         return True
 
+# Here we go!
 
 def main():
     move = 0
@@ -64,7 +65,7 @@ def main():
     
     while True:
         print(*board, sep='\n')
-        print('(p1)',p1_score,':','(p2)',p2_score,'\n')
+        print('(p1)',p1_score,':',p2_score,'(p2)','\n')
         player = ask_player(txt)
         n = int(player[0]) - 1
         m = int(player[1]) - 1
@@ -75,13 +76,13 @@ def main():
         else:
             print("Spot taken. ")
         
-        if (check_win(move,board,n,m) == (1 or 2)) or move == 9:
+        if (check_win(move,board,n,m) is True) or move == 9:
                 print(*board, sep='\n')
                 if player_score(board,n,m) == 1:
                     p1_score += 1
                 else:
                     p2_score += 1
-                print('(p1)',p1_score,':','(p2)',p2_score,'\n')
+                print('(p1)',p1_score,':',p2_score,'(p2)','\n')
                 
                 repeat = play_again()
                 if repeat == True:
