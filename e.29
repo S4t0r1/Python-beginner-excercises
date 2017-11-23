@@ -63,8 +63,8 @@ def main():
     board = build_gameboard()
     
     while True:
-        print('(p1)',p1_score,':','(p2)',p2_score)
         print(*board, sep='\n')
+        print('(p1)',p1_score,':','(p2)',p2_score,'\n')
         player = ask_player(txt)
         n = int(player[0]) - 1
         m = int(player[1]) - 1
@@ -81,7 +81,7 @@ def main():
                     p1_score += 1
                 else:
                     p2_score += 1
-                print('(p1)',p1_score,':','(p2)',p2_score)
+                print('(p1)',p1_score,':','(p2)',p2_score,'\n')
                 
                 repeat = play_again()
                 if repeat == True:
