@@ -4,8 +4,8 @@ def gameboard_size():
 
 def build_gameboard(size):
     board = []
-    for i in range(len(size)):
-        row = [(' ') for e in range(len(size))]
+    for i in range(size):
+        row = [(' ') for e in range(size)]
         board.append(row)
     return board
 
@@ -33,7 +33,7 @@ def used_spot(board,n,m):
         return True
 
 def check_win(move,board,n,m,size):
-    s = len(size)
+    s = size
     if move >= 5:
         row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
         col_w = len([board[i][m] for i in range(s) if board[i][m] == board[n][m]])
