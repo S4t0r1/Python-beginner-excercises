@@ -85,8 +85,9 @@ def main():
                 
                 repeat = play_again()
                 if repeat == True:
-                    move = 0
                     board = build_gameboard()
+                    move = 0
+                    txt = txt_display(move)
                     continue
                 else:
                     return True
