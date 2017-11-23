@@ -1,3 +1,5 @@
+import sys
+
 def gameboard_size():
     size = int(input("What gameboard size do you want? (number=side lenght)"))
     return size
@@ -70,35 +72,40 @@ def main():
     board = build_gameboard(size)
     
     while True:
-        print('\n',*board, sep='\n')
-        print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
-        player = ask_player(txt)
-        n = int(player[0]) - 1
-        m = int(player[1]) - 1
+        try:
+            print('\n',*board, sep='\n')
+            print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
+            player = ask_player(txt)
+            n = int(player[0]) - 1
+            m = int(player[1]) - 1
         
-        if used_spot(board,n,m) is not True:
-            move += 1
-            board[n][m] = player_symbol(move,board,n,m)
-        else:
-            print("Spot taken. ")
-        
+            if used_spot(board,n,m) is not True:
+                move += 1
+                board[n][m] = player_symbol(move,board,n,m)
+            else:
+                print("Spot taken. ")
+        except ValueError:
+            print("Oops!  That was not a valid input.  Try again...")
+        except IndexError:
+            print("Oops!  The number is out of the index range.  Try again...")
+            
         if (check_win(move,board,n,m,size) is True) or move == 9:
-                print(*board, sep='\n')
-                if player_score(board,n,m) == 1:
-                    p1_score += 1
-                else:
-                    p2_score += 1
-                print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
+            print(*board, sep='\n')
+            if player_score(board,n,m) == 1:
+                p1_score += 1
+            else:
+                p2_score += 1
+            print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
                 
-                repeat = play_again()
-                if repeat == True:
-                    board = build_gameboard(size)
-                    move = 0
-                    txt = txt_display(move)
-                    continue
-                else:
-                  print("Game over!")  
-                  break
+            repeat = play_again()
+            if repeat == True:
+                board = build_gameboard(size)
+                move = 0
+                txt = txt_display(move)
+                continue
+            else:
+                print("Game over!")  
+                sys.exit()
         
         txt = txt_display(move)
 
