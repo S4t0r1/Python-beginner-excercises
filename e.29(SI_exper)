@@ -55,7 +55,7 @@ def play_again(move,size,win,txt):
         if move == size**2:
             txt = "Its a tie! "
         else:
-            txt = ("%s congratulations! " % txt)
+            txt = ("%s congratulations!\n" % txt)
         repeat = input(txt + "\nDo you want to play again? If yes type Y/y/yes, if not, type anything else: ")
         if repeat.lower() == "y" or repeat.lower() == "yes":
             return True
@@ -86,7 +86,7 @@ def main():
                     board[n][m] = player_symbol(move,board,n,m)
                 else:
                     print("\nSpot taken. ")  
-                    break
+                break
             except ValueError:
                 print("\nOops!  That was not a valid input.  Try again...")
             except IndexError:
@@ -109,7 +109,6 @@ def main():
             else:
                 print("\nGame over!")  
                 break
-
         txt = txt_display(move)
 
 main()
