@@ -59,11 +59,11 @@ def player_score(board,n,m):
     return winner
 
 def play_again(move,size,win,txt):
-    if move == size**2:
-        txt = "Its a tie! "
-    if win == True:
-        txt = ("%s congratulations! " % txt)
     if win == True or move == size**2:
+        if move == size**2:
+            txt = "Its a tie! "
+        if win == True:
+            txt = ("%s congratulations! " % txt)
         repeat = input(txt + "Do you want to play again? If yes type Y/y/yes, if not, type anything else: ")
         if repeat.lower() == "y" or repeat.lower() == "yes":
             return True
@@ -102,12 +102,14 @@ def main():
         else:
             print("Spot taken. ")
             
-        if (check_win(move,board,n,m,size) is True) or move == size**2:
+        if (check_win(move,board,n,m,size) is True):
             win = True
             if player_score(board,n,m) == 1:
                 p1_score += 1
             else:
                 p2_score += 1
+        
+        if win == True or move == size**2:
             printings(board,p1_score,p2_score)
             if play_again(move,size,win,txt) == True:
                 board = build_gameboard(size)
