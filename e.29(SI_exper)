@@ -4,7 +4,7 @@ def gameboard_size():
             size = int(input("What gameboard size do you want? (number=side length): "))
             break
         except ValueError:
-            print("Oops!  That was not a NUMBER.  Try again...\n")
+            print("\nOops!  That was not a NUMBER.  Try again...\n")
     return size
 
 def build_gameboard(size):
@@ -45,18 +45,10 @@ def check_win(move,board,n,m,size):
         diag2_w = len([board[i][(s - 1) - i] for i in range(s) if board[i][(s - 1) - i] == board[n][m]])
         if row_w == s or col_w == s or diag1_w == s or diag2_w == s:
             if board[n][m] == 'x':
-                print ('\n'+"*** PLAYER_1 WINS! ***",'\n')
+                print ('\n'+"*** PLAYER_1 WINS! ***")
             else:
-                print ('\n'+"*** PLAYER_2 WINS! ***",'\n')
+                print ('\n'+"*** PLAYER_2 WINS! ***")
             return True
-
-def player_score(board,n,m):
-    winner = 0
-    if board[n][m] == 'x':
-        winner = 1
-    else:
-        winner = 2
-    return winner
 
 def play_again(move,size,win,txt):
     if win == True or move == size**2:
@@ -92,19 +84,19 @@ def main():
                 m = int(player[1]) - 1
                 break
             except ValueError:
-                print("Oops!  That was not a valid input.  Try again...\n")
+                print("\nOops!  That was not a valid input.  Try again...")
             except IndexError:
-                print("Oops!  The number is out of the index range.  Try again...\n")
+                print("\nOops!  The number is out of the index range.  Try again...")
         
         if used_spot(board,n,m) is not True:
             move += 1
             board[n][m] = player_symbol(move,board,n,m)
         else:
-            print("Spot taken. ")
+            print("\nSpot taken. ")
             
-        if (check_win(move,board,n,m,size) is True):
+        if check_win(move,board,n,m,size) is True:
             win = True
-            if player_score(board,n,m) == 1:
+            if board[n][m] == 'x':
                 p1_score += 1
             else:
                 p2_score += 1
