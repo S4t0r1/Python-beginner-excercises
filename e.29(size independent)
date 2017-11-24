@@ -1,7 +1,10 @@
-import sys
-
 def gameboard_size():
-    size = int(input("What gameboard size do you want? (number=side lenght)"))
+    while True:
+        try:
+            size = int(input("What gameboard size do you want? (number=side length): "))
+            break
+        except ValueError:
+            print("Oops!  That was not a NUMBER.  Try again...\n")
     return size
 
 def build_gameboard(size):
@@ -19,8 +22,7 @@ def txt_display(move):
     return txt
 
 def ask_player(txt):
-    player = input(txt + "Please choose your coordinates[num,num](1=min,3=max).")
-    player = player.split(',')
+    player = input(txt + "Please choose your coordinates[num,num](1=min,3=max).").split(',')
     return player
 
 def player_symbol(move,board,n,m):
@@ -60,8 +62,7 @@ def play_again():
     repeat = input("Do you want to play again? If yes type Y/y/yes, if not, type anything else: ")
     if repeat.lower() == "y" or repeat.lower() == "yes":
         return True
-
-# Here we go!
+# Here we go! *****************************************************
 
 def main():
     move = 0
@@ -72,22 +73,24 @@ def main():
     board = build_gameboard(size)
     
     while True:
-        try:
-            print('\n',*board, sep='\n')
-            print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
-            player = ask_player(txt)
-            n = int(player[0]) - 1
-            m = int(player[1]) - 1
+        while True:
+            try:
+                print('\n',*board, sep='\n')
+                print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
+                player = ask_player(txt)
+                n = int(player[0]) - 1
+                m = int(player[1]) - 1
+                break
+            except ValueError:
+                print("Oops!  That was not a valid input.  Try again...\n")
+            except IndexError:
+                print("Oops!  The number is out of the index range.  Try again...\n")
         
-            if used_spot(board,n,m) is not True:
-                move += 1
-                board[n][m] = player_symbol(move,board,n,m)
-            else:
-                print("Spot taken. ")
-        except ValueError:
-            print("Oops!  That was not a valid input.  Try again...")
-        except IndexError:
-            print("Oops!  The number is out of the index range.  Try again...")
+        if used_spot(board,n,m) is not True:
+            move += 1
+            board[n][m] = player_symbol(move,board,n,m)
+        else:
+            print("Spot taken. ")
             
         if (check_win(move,board,n,m,size) is True) or move == 9:
             print(*board, sep='\n')
@@ -96,7 +99,7 @@ def main():
             else:
                 p2_score += 1
             print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
-                
+            
             repeat = play_again()
             if repeat == True:
                 board = build_gameboard(size)
@@ -104,9 +107,8 @@ def main():
                 txt = txt_display(move)
                 continue
             else:
-                print("Game over!")  
-                sys.exit()
-        
+                print("\nGame over!")  
+                break
         txt = txt_display(move)
 
 main()
