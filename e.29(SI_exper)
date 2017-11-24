@@ -1,7 +1,7 @@
 def gameboard_size():
     while True:
         try:
-            size = int(input("What gameboard size do you want? (number=side length): "))
+            size = int(input("What gameboard size do you want(min=3)? (number=side length): "))
             break
         except ValueError:
             print("\nOops!  That was not a NUMBER.  Try again...\n")
@@ -54,16 +54,15 @@ def play_again(move,size,win,txt):
     if win == True or move == size**2:
         if move == size**2:
             txt = "Its a tie! "
-        if win == True:
+        else:
             txt = ("%s congratulations! " % txt)
-        repeat = input(txt + "Do you want to play again? If yes type Y/y/yes, if not, type anything else: ")
+        repeat = input(txt + "\nDo you want to play again? If yes type Y/y/yes, if not, type anything else: ")
         if repeat.lower() == "y" or repeat.lower() == "yes":
             return True
 
 def printings(board,p1_score,p2_score):
     print('\n',*board, sep='\n')
     print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
-
 # Here we go! *****************************************************
 
 def main():
@@ -82,18 +81,17 @@ def main():
                 player = ask_player(txt)
                 n = int(player[0]) - 1
                 m = int(player[1]) - 1
-                break
+                if used_spot(board,n,m) is not True:
+                    move += 1
+                    board[n][m] = player_symbol(move,board,n,m)
+                else:
+                    print("\nSpot taken. ")  
+                    break
             except ValueError:
                 print("\nOops!  That was not a valid input.  Try again...")
             except IndexError:
                 print("\nOops!  The number is out of the index range.  Try again...")
-        
-        if used_spot(board,n,m) is not True:
-            move += 1
-            board[n][m] = player_symbol(move,board,n,m)
-        else:
-            print("\nSpot taken. ")
-            
+
         if check_win(move,board,n,m,size) is True:
             win = True
             if board[n][m] == 'x':
@@ -111,7 +109,7 @@ def main():
             else:
                 print("\nGame over!")  
                 break
-        
+
         txt = txt_display(move)
 
 main()
