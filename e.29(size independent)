@@ -1,42 +1,42 @@
-def gameboard_size():
+def gameboard_size(): #bonus func, asking for size, logically size of 3x3 is minimum, handling bad inputs..
     while True:
         try:
-            size = int(input("What gameboard size do you want? (number=side length): "))
+            size = int(input("What gameboard size do you want(min=3)? (number=side length): "))
             break
         except ValueError:
-            print("Oops!  That was not a NUMBER.  Try again...\n")
+            print("\nOops!  That was not a NUMBER.  Try again...\n")
     return size
 
-def build_gameboard(size):
+def build_gameboard(size): #builds gameboard as a list of lists depending on the size..
     board = []
     for i in range(size):
         row = [(' ') for e in range(size)]
         board.append(row)
     return board
 
-def txt_display(move):
+def txt_display(move): #keeps switching txt/turn for use in ask_player and play_again funcs..
     if move % 2 == 0:
-        txt = 'PLAYER_1: '
+        txt = 'PLAYER_1,'
     else:
-        txt = 'PLAYER_2: '
-    return txt
+        txt = 'PLAYER_2,'
+    return txt 
 
-def ask_player(txt):
-    player = input(txt + "Please choose your coordinates[num,num](1=min,3=max).").split(',')
+def ask_player(txt): #thnx to txt_display func, 1 prompt is sufficient..
+    player = input(txt + " please choose your coordinates[num,num](1=min,3=max).").split(',')
     return player
 
-def player_symbol(move,board,n,m):
+def player_symbol(move,board,n,m): #keeps switching symbols according to move count as we have only 1 input..
     if move % 2 == 0:
         board[n][m] = 'o'
     else:
         board[n][m] = 'x'
     return board[n][m]
 
-def used_spot(board,n,m):
+def used_spot(board,n,m): #checks the value of currently chosen coordinates on board..
     if board[n][m] == 'x' or board[n][m] == 'o':
         return True
 
-def check_win(move,board,n,m,size):
+def check_win(move,board,n,m,size): #checks the value of every coordinate in specific sequences(=win conditions)..
     s = size
     if move >= 5:
         row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
@@ -45,63 +45,64 @@ def check_win(move,board,n,m,size):
         diag2_w = len([board[i][(s - 1) - i] for i in range(s) if board[i][(s - 1) - i] == board[n][m]])
         if row_w == s or col_w == s or diag1_w == s or diag2_w == s:
             if board[n][m] == 'x':
-                print ('\n'+"*** PLAYER_1 WINS! ***",'\n')
+                print ('\n'+"*** PLAYER_1 WINS! ***")
             else:
-                print ('\n'+"*** PLAYER_2 WINS! ***",'\n')
+                print ('\n'+"*** PLAYER_2 WINS! ***")
             return True
 
-def player_score(board,n,m):
-    winner = 0
-    if board[n][m] == 'x':
-        winner = 1
-    else:
-        winner = 2
-    return winner
+def play_again(move,size,win,txt): #asks for a next round, adapts to the specific cause of calling this func..
+    if win == True or move == size**2:
+        if move == size**2:
+            txt = "Its a tie! "
+        else:
+            txt = ("%s congratulations!\n" % txt)
+        repeat = input(txt + "\nDo you want to play again? If yes type Y/y/yes, if not, type anything else: ")
+        if repeat.lower() == "y" or repeat.lower() == "yes":
+            return True
 
-def play_again():
-    repeat = input("Do you want to play again? If yes type Y/y/yes, if not, type anything else: ")
-    if repeat.lower() == "y" or repeat.lower() == "yes":
-        return True
-# Here we go! *****************************************************
+def printings(board,p1_score,p2_score): #for the sake of sugar in main, gameboard display and round scores..
+    print('\n',*board, sep='\n')
+    print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
 
-def main():
-    move = 0
+# Here we go! **********************************************************************************************
+
+if __name__ == '__main__':
+    move = 0  #as several funcs depend on move count, this one is crucial
     p1_score = 0
     p2_score = 0
-    txt = "Hello PLAYER_1! "
-    size = gameboard_size()
+    txt = "Hello PLAYER_1,"
+    size = gameboard_size() 
     board = build_gameboard(size)
     
     while True:
-        while True:
+        win = None  #default win state
+        while True: #asks for coordinates, checks availability, places the specific symbol, handles bad inputs
             try:
-                print('\n',*board, sep='\n')
-                print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
+                printings(board,p1_score,p2_score)
                 player = ask_player(txt)
                 n = int(player[0]) - 1
                 m = int(player[1]) - 1
+                if used_spot(board,n,m) is not True:
+                    move += 1
+                    board[n][m] = player_symbol(move,board,n,m)
+                else:
+                    print("\nSpot taken. ")  
                 break
             except ValueError:
-                print("Oops!  That was not a valid input.  Try again...\n")
+                print("\nOops!  That was not a valid input.  Try again...")
             except IndexError:
-                print("Oops!  The number is out of the index range.  Try again...\n")
-        
-        if used_spot(board,n,m) is not True:
-            move += 1
-            board[n][m] = player_symbol(move,board,n,m)
-        else:
-            print("Spot taken. ")
-            
-        if (check_win(move,board,n,m,size) is True) or move == 9:
-            print(*board, sep='\n')
-            if player_score(board,n,m) == 1:
+                print("\nOops!  The number is out of the index range.  Try again...")
+
+        if check_win(move,board,n,m,size) is True: #runs a win check, if winner, updates player score accordingly
+            win = True
+            if board[n][m] == 'x':
                 p1_score += 1
             else:
                 p2_score += 1
-            print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
-            
-            repeat = play_again()
-            if repeat == True:
+        
+        if win == True or move == size**2: #closes the round, asks for next round, resets board or closes game
+            printings(board,p1_score,p2_score)
+            if play_again(move,size,win,txt) == True:
                 board = build_gameboard(size)
                 move = 0
                 txt = txt_display(move)
@@ -109,6 +110,4 @@ def main():
             else:
                 print("\nGame over!")  
                 break
-        txt = txt_display(move)
-
-main()
+        txt = txt_display(move) #sets up correct display for the next loop run according to current move count
