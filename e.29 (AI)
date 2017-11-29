@@ -1,32 +1,23 @@
 import sys, random
 
-def build_gameboard(): #builds gameboard as a list of lists (3x3)..
+def build_gameboard():
     board = []
     for i in range(3):
         board_row = [(' ') for e in range(3)]
         board.append(board_row)
     return board
 
-def txt_display(move): #keeps switching txt/turn for use in ask_player and play_again funcs..
-    if move % 2 == 0:
-        txt = 'PLAYER_1,'
-    else:
-        txt = 'PLAYER_2,'
-    return txt 
-
-def ask_player(txt): #thnx to txt_display func, 1 prompt is sufficient..
-    player = input(txt + " please choose your coordinates[num,num](1=min,3=max).").split(',')
+def ask_player():
+    player = input("Player, please choose your coordinates[num,num](1=min,3=max).").split(',')
     return player
 
-def ai_symbol(move,board,row,col):
-    if move % 2 == 0:
-        board[row][col] = 'o'
-    return board[row][col]
+def player_symbol(player):
+    player = 'x'
+    return player
 
-def player_symbol(move,board,n,m):
-    if move % 2 != 0:
-        board[n][m] = 'x'
-    return board[n][m]
+def ai_symbol(ai):
+    ai = 'o'
+    return ai
 
 def used_spot(board,n,m):
     if board[n][m] == 'x' or board[n][m] == 'o':
@@ -36,6 +27,16 @@ def used_spot_ai(board,row,col):
     if board[row][col] == 'x' or board[row][col] == 'o':
         return True
 
+def ai_move(board,player,ai):
+    if ai != player:
+        if player == board[1][1]:
+            ai_field = board[0][0], board[0][2], board[2][0], board[2][2]
+            ai = random.choice(ai_field)
+        elif player == board[0][0] or player == board[0][2]                 \
+        or player == board[2][0] or player == board[2][2]:
+            ai = board[1][1]
+    return board[1][1]
+        
 def check_win(board,n,m):
         row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
         col_w = len([board[i][m] for i in range(3) if board[i][m] == board[n][m]])
@@ -44,8 +45,6 @@ def check_win(board,n,m):
         if row_w == 3 or col_w == 3 or diag1_w == 3 or diag2_w == 3:
             if board[n][m] == 'x':
                 print ('\n'+"*** PLAYER_1 WINS! ***")
-            else:
-                print ('\n'+"*** PLAYER_2 WINS! ***")
             return True
 
 def check_win_ai(board,row,col):
@@ -55,17 +54,12 @@ def check_win_ai(board,row,col):
         diag2_w = len([board[i][2 - i] for i in range(3) if board[i][2 - i] == board[row][col]])
         if row_w == 3 or col_w == 3 or diag1_w == 3 or diag2_w == 3:
             if board[row][col] == 'o':
-                print ('\n'+"*** PLAYER_1 WINS! ***")
-            else:
                 print ('\n'+"*** PLAYER_2 WINS! ***")
             return True
 
-def play_again(move,win,txt):
-    if win == True or move == 9:
-        if move == 9:
-            txt = "Its a tie! "
-        else:
-            txt = ("%s congratulations!\n" % txt)
+def play_again(win,txt):
+    if win == True:
+        txt = ("%s congratulations!\n" % txt)
         repeat = input(txt + "\nDo you want to play again? If yes type Y/y/yes, if not, type anything else: ")
         if repeat.lower() == "y" or repeat.lower() == "yes":
             return True
@@ -77,60 +71,47 @@ def printings(board,p1_score,p2_score): #for the sake of sugar in main, gameboar
 # Here we go! **********************************************************************************************
 
 def main():
-    move = 0  #as several funcs depend on move count, this one is crucial
+    player = 'x'
+    ai = 'o'
     p1_score = 0
     p2_score = 0
-    txt = "Hello PLAYER_1,"
+    txt = ""
     board = build_gameboard()
     
     while True:
-        win = None  #default win state
-        while True: #asks for coordinates, checks availability, places the specific symbol, handles bad inputs
-            try:
-                printings(board,p1_score,p2_score)
-                player = ask_player(txt)
-                row = random.randint(0,2)
-                col = random.randint(0,2)
-                n = int(player[0]) - 1
-                m = int(player[1]) - 1
-                if used_spot(board,n,m) is not True or board[n][m] != board[row][col]:
-                    move += 1
-                    board[n][m] = player_symbol(move,board,n,m)
-                    print(move)
-                else:
-                    print("spot taken...")
+        win = None
+        printings(board,p1_score,p2_score)
+        while True:
+            player = ask_player()
+            n = int(player[0]) - 1
+            m = int(player[1]) - 1
+            if used_spot(board,n,m) is not True:
+                board[n][m] = player_symbol(player)
                 break
-            except ValueError:
-                print("\nOops!  That was not a valid input.  Try again...")
-            except IndexError:
-                print("\nOops!  The number is out of the index range.  Try again...")
-        
-        while ai_symbol(move,board,row,col):
-            if used_spot(board,row,col) is not True:
-                move += 1
-                board[row][col] = ai_symbol(move,board,row,col)
-                printings(board,p1_score,p2_score)
-                print(move)
+            else:
+                print("spot taken...")
+            
+        while True:
+            row = random.randint(0,2)
+            col = random.randint(0,2)
+            if used_spot_ai(board,row,col) is not True:
+                ai_move(board,player,ai)
+                board[row][col] = ai_symbol(ai)
                 print("Ai..")
                 break
         
-        if check_win(board,n,m) is True or move == 9     \
-        or check_win_ai(board,row,col) is True:
+        if check_win(board,n,m) is True:
             printings(board,p1_score,p2_score)
             win = True
             if board[n][m] == 'x':
                 p1_score += 1
             else:
                 p2_score += 1
-            if play_again(move,win,txt) == True:
+            if play_again(win,txt) == True:
                 board = build_gameboard()
-                move = 0
-                txt = txt_display(move)
                 continue
             else:
                 print("\nGame over!")  
                 break
-        
-        txt = txt_display(move)
 
 main()
