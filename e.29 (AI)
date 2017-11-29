@@ -11,13 +11,13 @@ def ask_player():
     player = input("Player, please choose your coordinates[num,num](1=min,3=max).").split(',')
     return player
 
-def player_symbol(player):
-    player = 'x'
-    return player
+def player_symbol(board,n,m):
+    board[n][m] = 'x'
+    return board[n][m]
 
-def ai_symbol(ai):
-    ai = 'o'
-    return ai
+def ai_symbol(board,row,col):
+    board[row][col] = 'o'
+    return board[row][col]
 
 def used_spot(board,n,m):
     if board[n][m] == 'x' or board[n][m] == 'o':
@@ -27,16 +27,31 @@ def used_spot_ai(board,row,col):
     if board[row][col] == 'x' or board[row][col] == 'o':
         return True
 
-def ai_move(board,player,ai):
+def ai_move(board,player):
+    ai = 'o'
+    player = 'x'
+    moveslst = []
     if ai != player:
         if player == board[1][1]:
-            ai_field = board[0][0], board[0][2], board[2][0], board[2][2]
-            ai = random.choice(ai_field)
+            ai_field = (0, 2)
+            row = random.choice(ai_field)
+            col = random.choice(ai_field)
         elif player == board[0][0] or player == board[0][2]                 \
         or player == board[2][0] or player == board[2][2]:
-            ai = board[1][1]
-    return board[1][1]
-        
+            row = 1
+            col = 1
+        moveslst.append(row)
+        moveslst.append(col)
+    return moveslst
+
+def ai_row(board,player):
+    moveslst = ai_move(board,player)
+    return moveslst[0]
+
+def ai_col(board,player):
+    moveslst = ai_move(board,player)
+    return moveslst[1]
+
 def check_win(board,n,m):
         row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
         col_w = len([board[i][m] for i in range(3) if board[i][m] == board[n][m]])
@@ -64,15 +79,13 @@ def play_again(win,txt):
         if repeat.lower() == "y" or repeat.lower() == "yes":
             return True
 
-def printings(board,p1_score,p2_score): #for the sake of sugar in main, gameboard display and round scores..
+def printings(board,p1_score,p2_score):
     print('\n',*board, sep='\n')
     print('\n'+'(p1)',p1_score,':',p2_score,'(p2)','\n')
 
 # Here we go! **********************************************************************************************
 
 def main():
-    player = 'x'
-    ai = 'o'
     p1_score = 0
     p2_score = 0
     txt = ""
@@ -81,22 +94,22 @@ def main():
     while True:
         win = None
         printings(board,p1_score,p2_score)
+        
         while True:
             player = ask_player()
             n = int(player[0]) - 1
             m = int(player[1]) - 1
             if used_spot(board,n,m) is not True:
-                board[n][m] = player_symbol(player)
+                board[n][m] = player_symbol(board,n,m)
                 break
             else:
                 print("spot taken...")
             
         while True:
-            row = random.randint(0,2)
-            col = random.randint(0,2)
+            row = ai_row(board,player)
+            col = ai_col(board,player)
             if used_spot_ai(board,row,col) is not True:
-                ai_move(board,player,ai)
-                board[row][col] = ai_symbol(ai)
+                board[row][col] = ai_symbol(board,row,col)
                 print("Ai..")
                 break
         
