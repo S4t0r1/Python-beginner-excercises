@@ -100,7 +100,7 @@ def main():
                 print("Ai..")
                 break
         
-        if check_win(board,n,m) is True:
+        if check_win(board,n,m) == True or check_win_ai(board,row,col) == True:
             printings(board,p1_score,p2_score)
             win = True
             if board[n][m] == 'x':
