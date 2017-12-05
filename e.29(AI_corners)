@@ -1,0 +1,119 @@
+def player_left_corner_up(board,player):
+        player = 'x'
+        moveslst = []
+        if player == board[0][0] and player == board[0][1]:
+            row, col = 0, 2
+            if player == board[2][0]:
+                row, col = 1, 0
+                if player == board[1][2]:
+                    ai_field = (1, 2)
+                    row, col = 2, random.choice(ai_field)
+                else:
+                    row, col = 1, 2
+            else:
+                row, col = 2, 0
+        elif player == board[0][0] and player == board[1][0]:
+            row, col = 2, 0
+            if player == board[0][2]:
+                row, col = 0, 1
+                if player == board[2][1]:
+                    ai_field = (1, 2)
+                    row, col = random.choice(ai_field), 2
+                else:
+                    row, col = 2, 1
+            else:
+                row, col = 0, 2
+        moveslst.append(row)
+        moveslst.append(col)
+        return moveslst
+
+
+def player_left_corner_down(board,player):
+        player = 'x'
+        moveslst = []
+        if player == board[2][0] and player == board[1][0]:
+            row, col = 0, 0
+            if player == board[2][2]:
+                row, col = 2, 1
+                if player == board[0][1]:
+                    ai_field = (0, 1)
+                    row, col = random.choice(ai_field), 2
+                else:
+                    row, col = 0, 1
+            else:
+                row, col = 2, 2
+        elif player == board[2][0] and player == board[2][1]:
+            row, col = 2, 2
+            if player == board[0][0]:
+                row, col = 1, 0
+                if player == board[1][2]:
+                    ai_field = (1, 2)
+                    row, col = 0, random.choice(ai_field)
+                else:
+                    row,col = 1, 2
+            else:
+                row, col = 0, 0
+        moveslst.append(row)
+        moveslst.append(col)
+        return moveslst
+
+
+def player_right_corner_up(board,player):
+        player = 'x'
+        moveslst = []
+        if player == board[0][2] and player == board[1][2]:
+            row, col = 2, 2
+            if player == board[0][0]:
+                row, col = 0, 1
+                if player == board[2][1]:
+                    ai_field = (1, 2)
+                    row, col = random.choice(ai_field), 0
+                else:
+                    row, col = 2, 1
+            else:
+                row, col = 0, 0
+        elif player == board[0][2] and player == board[0][1]:
+            row, col = 0, 0
+            if player == board[2][2]:
+                row, col = 1, 2
+                if player == board[1][0]:
+                    ai_field = (0, 1)
+                    row, col = 2, random.choice(ai_field)
+                else:
+                    row,col = 1, 0
+            else:
+                row, col = 2, 2
+        moveslst.append(row)
+        moveslst.append(col)
+        return moveslst
+
+
+def player_right_corner_down(board,player):
+        player = 'x'
+        moveslst = []
+        if player == board[2][2] and player == board[2][1]:
+            row, col = 2, 0
+            if player == board[0][2]:
+                row, col = 1, 2
+                if player == board[1][0]:
+                    ai_field = (0, 1)
+                    row, col = 0, random.choice(ai_field)
+                else:
+                    row, col = 1, 0
+            else:
+                row, col = 0, 2
+        elif player == board[2][2] and player == board[1][2]:
+            row, col = 0, 2
+            if player == board[2][0]:
+                row, col = 2, 1
+                if player == board[0][1]:
+                    ai_field = (0, 1)
+                    row, col = random.choice(ai_field), 0
+                else:
+                    row,col = 0, 1
+            else:
+                row, col = 2, 0
+        moveslst.append(row)
+        moveslst.append(col)
+        return moveslst
+
