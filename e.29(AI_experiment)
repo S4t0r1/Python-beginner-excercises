@@ -3,7 +3,7 @@ import sys, random
 def build_gameboard():
     board = []
     for i in range(3):
-        board_row = [(' ') for e in range(3)]
+        board_row = [('.') for e in range(3)]
         board.append(board_row)
     return board
 
@@ -27,63 +27,38 @@ def used_spot_ai(board,row,col):
     if board[row][col] == 'x' or board[row][col] == 'o':
         return True
 
-
-def ai_move(board,player,n,m):
+def ai_move(board,player):
     ai = 'o'
     player = 'x'
     moveslst = []
-    col = 0
-    row = 0
-    row_w = len([board[n][m] for e in board[n] if e == board[n][m]])
-    col_w = len([board[i][m] for i in range(3) if board[i][m] == board[n][m]])
-    diag1_w = len([board[i][i] for i in range(3) if board[i][i] == board[n][m]])
-    diag2_w = len([board[i][2 - i] for i in range(3) if board[i][2 - i] == board[n][m]])
-    if ai != player and row_w == 1 and col_w == 1 or diag1_w == 1 or diag2_w == 1:
+    if ai != player:
         if player == board[1][1]:
-            ai_field = (0, 2)
-            row = random.choice(ai_field)
-            col = random.choice(ai_field)
-            moveslst.append(row)
-            moveslst.append(col)
-        elif player == board[0][0] or player == board[0][2]                 \
-        or player == board[2][0] or player == board[2][2]:
-            row = 1
-            col = 1
-            moveslst.append(row)
-            moveslst.append(col)
-    elif ai != player and row_w == 2 or col_w == 2 or diag1_w == 2 or diag2_w == 2:
-        if row_w == 2:
-            ai = [board[n][m] for e in board[n] if board[n][col] != board[n][m]]
-            row = n
-            moveslst.append(row)
-            moveslst.append(col)
-        elif col_w == 2:
-            ai = [board[row][m] for row in range(3) if board[row][m] != board[n][m]]
-            col = m
-            moveslst.append(row)
-            moveslst.append(col)
-        elif diag1_w == 2:
-            ai = [board[i][i] for i in range(3) if board[i][i] != board[n][m]]
-            i = row
-            row = i
-            col = i
-            moveslst.append(row)
-            moveslst.append(col)
-        elif diag2_w == 2:
-            ai = [board[i][2 - i] for i in range(3) if board[i][2 - i] != board[n][m]]
-            i = row
-            row = i
-            col = (i - 2)
-            moveslst.append(row)
-            moveslst.append(col)
+            row, col = 0, 0
+            if player == [1][1] and ai == [0][0]:
+                
+            
+        else:
+            row, col = 1, 1
+            if player == board[0][0]:
+                moveslst = player_left_corner_up(board,player)
+            elif player == board[2][0]:
+                moveslst = player_left_corner_down(board,player)
+            elif player == board[0][2]:
+                moveslst = player_right_corner_up(board,player)
+            elif player == board[2][2]:
+                moveslst = player_right_corner_down(board,player)
+            else:
+                row, col = 1, 1
+        moveslst.append(row)
+        moveslst.append(col)
     return moveslst
 
-def ai_row(board,player,n,m):
-    moveslst = ai_move(board,player,n,m)
+def ai_row(board,player):
+    moveslst = ai_move(board,player)
     return moveslst[0]
 
-def ai_col(board,player,n,m):
-    moveslst = ai_move(board,player,n,m)
+def ai_col(board,player):
+    moveslst = ai_move(board,player)
     return moveslst[1]
 
 def check_win(board,n,m):
@@ -140,8 +115,8 @@ def main():
                 print("spot taken...")
             
         while True:
-            row = ai_row(board,player,n,m)
-            col = ai_col(board,player,n,m)
+            row = ai_row(board,player)
+            col = ai_col(board,player)
             if used_spot_ai(board,row,col) is not True:
                 board[row][col] = ai_symbol(board,row,col)
                 print("Ai..")
