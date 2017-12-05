@@ -1,0 +1,73 @@
+def player_mid_1stpart(board, player):
+    player = 'x'
+    moveslst = []
+    if player == board[1][2]:
+        row, col = 1, 0
+        if player == board[2][0]:
+            row, col = 0, 2
+            if player == board[0][1]:
+                row, col = 2, 1
+            else:
+                row, col = 0, 1
+        else:
+            row, col = 2, 0
+    elif player == board[2][2]:
+        row, col = 0, 2
+        if player == board[0][1]:
+            row, col = 2, 1
+            if player == board[1][2]:
+                row, col = 1, 0
+            elif player == board[1][0]:
+                row, col = 1, 2
+            else:
+                ai_field = (0, 2)
+                row, col = 1, random.choice(ai_field)
+        else:
+            row, col = 0, 1
+    else:
+        pass
+    moveslst.append(row)
+    moveslst.append(col)
+    return moveslst
+
+
+def player_mid_2ndpart(board,player):
+    player = 'x'
+    moveslst = []
+    if player == board[2][1]:
+        row, col = 0, 1
+        if player == board[0][2]:
+            row, col = 2, 0
+            if player == board[1][0]:
+                row, col = 1, 2
+            else:
+                row, col = 1, 0
+        else:
+            row, col = 0, 2
+    elif player == board[2][0]:
+        row, col = 0, 2
+        if player == board[0][1]:
+            row, col = 2, 1
+            if player == board[1][2]:
+                row, col = 1, 0
+            elif player == board[1][0]:
+                row, col = 1, 2
+            else:
+                ai_field = (0, 2)
+                row, col = 1, random.choice(ai_field)
+        else:
+            row, col = 0, 1
+    else:
+        pass
+    moveslst.append(row)
+    moveslst.append(col)
+    return moveslst
+
+
+def player_mid_3rdpart(board,player):
+    player = 'x'
+    moveslst = []
+    if player == board[1][0]:
+        row, col = 1, 2
+        if player == board[0][2]:
+            row, col = 2, 0
