@@ -27,7 +27,6 @@ def player_mid_1stpart(board, player):
     moveslst.append(col)
     return moveslst
 
-
 def player_mid_2ndpart(board,player):
     player = 'x'
     moveslst = []
@@ -56,7 +55,6 @@ def player_mid_2ndpart(board,player):
     moveslst.append(row)
     moveslst.append(col)
     return moveslst
-
 
 def player_mid_1_0_pt1(board,player):
     player = 'x'
@@ -104,7 +102,6 @@ def player_mid_1_0_pt2(board,player):
     moveslst.append(col)
     return moveslst
 
-
 def player_mid_0_1_pt1(board,player):
     player = 'x'
     moveslst = []
@@ -132,7 +129,6 @@ def player_mid_0_1_pt1(board,player):
     moveslst.append(col)
     return moveslst
 
-
 def player_mid_0_1_pt2(board,player):
     player = 'x'
     moveslst = []
@@ -156,7 +152,6 @@ def player_mid_0_1_pt2(board,player):
     moveslst.append(col)
     return moveslst
 
-
 def player_mid_0_2(board,player):
     player = 'x'
     moveslst = []
@@ -172,4 +167,37 @@ def player_mid_0_2(board,player):
             row, col = 1, 0
     moveslst.append(row)
     moveslst.append(col)
+    return moveslst
+
+def connector_1_0(board,player):
+    moveslst = []
+    a = player_mid_1_0_pt1(board,player)
+    b = player_mid_1_0_pt2(board,player)
+    moveslst.append(a)
+    moveslst. append(b)
+    return moveslst
+
+def connector_0_1(board,player):
+    moveslst = []
+    a = player_mid_0_1_pt1(board,player)
+    b = player_mid_0_1_pt2(board,player)
+    moveslst.append(a)
+    moveslst. append(b)
+    return moveslst
+
+def connector_all(board,player):
+    player = 'x'
+    moveslst = []
+    if player == board[1][2] or player == board[2][2]:
+        moveslst = player_mid_1stpart(board, player)
+    elif player == board[2][1] or player == board[2][0]:
+        moveslst = player_mid_2ndpart(board,player)
+    elif player == board[1][0]:
+        moveslst = connector_1_0(board,player)
+    elif player == board[0][1]:
+        moveslst = connector_0_1(board,player)
+    elif player == board[0][2]:
+        moveslst = player_mid_0_2(board,player)
+    else:
+        pass
     return moveslst
