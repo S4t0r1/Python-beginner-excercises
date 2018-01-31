@@ -14,7 +14,7 @@ def build_gameboard():
 def swap_values():
     prompt = input("Do you wish to switch some values? (y,Y,yes,Yes)?")
     if prompt.lower() not in {"y", "yes"}:
-        return [], []
+        return [], [], None
     user_friendly = user_friendly_coordinates()
     coordinates_a, coordinates_b = [], []
     while True:
