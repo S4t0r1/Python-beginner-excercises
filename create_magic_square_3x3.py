@@ -8,7 +8,7 @@ def build_gameboard():
 
 def coordinate_algorithm(board):
     x, y = 1, 2
-    minimum, maximum = 0, 2
+    minimum, maximum = 0, (3 - 1)
     for value in range(1, 10):
         board[x][y] = value
         x, y = x - 1, y + 1
@@ -36,9 +36,27 @@ def coordinate_algorithm(board):
     return board
 
 
+def print_sums(board):
+    sums = {"row_1": [board[0][i] for i in range(3)],
+            "row_2": [board[1][i] for i in range(3)],
+            "row_3": [board[2][i] for i in range(3)],
+            "col_1": [board[i][0] for i in range(3)],
+            "col_2": [board[i][1] for i in range(3)],
+            "col_3": [board[i][2] for i in range(3)],
+            "diag_1": [board[i][i] for i in range(3)],
+            "diag_2": [board[2 - i][i] for i in range(3)]}
+    print("\n")
+    for key, value in sums.items():
+        summed_numbers = 0
+        for number in sums[key]:
+            summed_numbers += number
+        print("{key}: {summed_numbers}".format(**locals()))
+
+
 def main():
     board = build_gameboard()
     coordinate_algorithm(board)
+    print_sums(board)
 
 
 main()
