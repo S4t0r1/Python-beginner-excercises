@@ -35,16 +35,17 @@ def coordinate_algorithm(board):
 
 
 def print_sums(board):
-    sums = {"row_1": [board[0][i] for i in range(4)],
-            "row_2": [board[1][i] for i in range(4)],
-            "row_3": [board[2][i] for i in range(4)],
-            "row_4": [board[3][i] for i in range(4)],
-            "col_1": [board[i][0] for i in range(4)],
-            "col_2": [board[i][1] for i in range(4)],
-            "col_3": [board[i][2] for i in range(4)],
-            "col_4": [board[i][3] for i in range(4)],
-            "diag_1": [board[i][i] for i in range(4)],
-            "diag_2": [board[3 - i][i] for i in range(4)]}
+    sums = {}
+    for n in range(4):
+        name = "row_{0}".format(n + 1)
+        sums.update({name: [board[n][i] for i in range(4)]})
+    for n in range(4):
+        name = "col_{0}".format(n + 1)
+        sums.update({name: [board[i][n] for i in range(4)]})
+    
+    sums.update({"diag_1": [board[i][i] for i in range(4)],
+                 "diag_2": [board[3 - i][i] for i in range(4)]})
+    
     for key, value in sums.items():
         summed_numbers = 0
         for number in sums[key]:
