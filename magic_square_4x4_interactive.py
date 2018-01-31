@@ -1,5 +1,5 @@
+# User can choose which values to switch according to coordinates (x,y)/(xy)
 import string
-
 
 def build_gameboard():
     board = []
@@ -59,10 +59,16 @@ def coordinate_algorithm(board):
         x_a, y_a = int(left[0]), int(left[1])
         x_b, y_b = int(right[0]), int(right[1])
         board[x_a][y_a], board[x_b][y_b] = board[x_b][y_b], board[x_a][y_a]
-    
-    print('\n',*board, sep='\n')
     return board
 
+
+def print_board(board):
+    print("\n")
+    for row in board:
+        for element in row:
+            print("{0:2d}".format(element), end="  ")
+        print("\n")
+    
 
 def print_sums(board):
     sums = {}
@@ -73,7 +79,6 @@ def print_sums(board):
     for n in range(4):
         name = "col_{0}".format(n + 1)
         sums.update({name: [board[i][n] for i in range(4)]})
-    
     sums.update({"diag_1": [board[i][i] for i in range(4)],
                  "diag_2": [board[3 - i][i] for i in range(4)]})
     
@@ -87,6 +92,7 @@ def print_sums(board):
 def main():
     board = build_gameboard()
     coordinate_algorithm(board)
+    print_board(board)
     print_sums(board)
 
 
