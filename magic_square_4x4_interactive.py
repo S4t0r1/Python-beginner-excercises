@@ -1,5 +1,7 @@
-# User can choose which values to switch according to coordinates (x,y)/(xy)
+# User can choose which values to switch according to coordinates (x,y)or(xy)... 
+# ... and if the coordinates will be user-friendly (f.e. no 0s)
 import string
+
 
 def build_gameboard():
     board = []
@@ -13,6 +15,7 @@ def swap_values():
     prompt = input("Do you wish to switch some values? (y,Y,yes,Yes)?")
     if prompt.lower() not in {"y", "yes"}:
         return [], []
+    user_friendly = user_friendly_coordinates()
     coordinates_a, coordinates_b = [], []
     while True:
         try:
@@ -33,8 +36,15 @@ def swap_values():
             print(err)
         else:
             print("Successfully swapped values to [right/left]")
-    return coordinates_a, coordinates_b
+    return coordinates_a, coordinates_b, user_friendly
 
+
+def user_friendly_coordinates():
+    prompt = input("User-friendly coordinates (without zeros)?")
+    if prompt.lower() in {"y", "yes"}:
+        return 1
+    else:
+        return 0
 
 def coordinate_algorithm(board):
     value = 1
@@ -53,11 +63,11 @@ def coordinate_algorithm(board):
                 x, y = maximum, y
             if (x >= minimum) and (y > maximum):
                 x, y = x, minimum
-    
-    a, b = swap_values()
+    print_board(board)
+    a, b, user_friendly = swap_values()
     for left, right in zip(a, b):
-        x_a, y_a = int(left[0]), int(left[1])
-        x_b, y_b = int(right[0]), int(right[1])
+        x_a, y_a = (int(left[0]) - user_friendly), (int(left[1]) - user_friendly)
+        x_b, y_b = (int(right[0]) - user_friendly), (int(right[1]) - user_friendly)
         board[x_a][y_a], board[x_b][y_b] = board[x_b][y_b], board[x_a][y_a]
     return board
 
