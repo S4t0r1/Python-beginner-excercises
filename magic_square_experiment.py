@@ -1,8 +1,7 @@
 import sys, string
 
-lst1 = [0,"0","0,3",1112]
-lst2 = [333022,(2,1)]
 
+lst1 = [0,0,0,3,1,1,1,2]
 
 def build_gameboard():
     board = []
@@ -30,7 +29,7 @@ def swap_values_interactively():
                 for value_a, value_b in zip(a, b):
                     if (value_a not in string.digits or 
                         value_b not in string.digits):
-                        raise ValueError("Has to be integers (0-9)!")
+                        raise ValueError("ERROR: Has to be integers (0-9)!")
                 coordinates_a.append(a) 
                 coordinates_b.append(b)
         except ValueError as err:
@@ -55,8 +54,8 @@ def process_list(lst):
                     new_lst.append(item[n])
         for element in new_lst:
             if element not in string.digits:
-                raise ValueError("ERROR: Has to be integers (0-9)! "
-                                 "\nList {0} could not be processed.".format(lst))
+                raise ValueError("\nERROR: Has to be integers (0-9)! "
+                                 "\nList {0}: not processed".format(new_lst))
         for n in range(len(new_lst)):
             if n % 2 == 0:
                 tuple_data = (new_lst[n], new_lst[n + 1])
@@ -64,30 +63,66 @@ def process_list(lst):
     except ValueError as err:
         print(err)
     else:
-        print("List {0}: OK".format(lst))
-        del lst, new_lst
+        print("List {0}: OK".format(new_lst))
+    del lst, new_lst
     return items_lst
+
+
+def swap_coordinates_from_file(filename=None):
+    if filename is None:
+        if len(sys.argv) > 1:
+            filename = sys.argv[1]
+        print("No filename input given. Exiting...")
+    fh = None
+    coordinates_a, coordinates_b = [], []
+    try:
+        fh = open(filename, encoding="utf-8")
+        for lino, line in enumerate(fh, start=1):
+            if lino % 2 != 0:
+                coordinates_a += process_list(list(line.strip()))
+            else:
+                coordinates_b += process_list(list(line.strip()))
+    except EnvironmentError as err:
+        print(err)
+    else:
+        print("\nSuccessfully swapped values of the coordinates "
+              "from one line with the other.\n")
+    finally:
+        if fh is not None:
+            fh.close()
+    return coordinates_a, coordinates_b, 0
 
 
 def swap_coordinates_from_lists(coordinates_a_lst=None, 
                                 coordinates_b_lst=None):
     if coordinates_a_lst is None or coordinates_b_lst is None:
-        return [], [], 0
-    else:
-        try:
-            coordinates_a = process_list(coordinates_a_lst)
-            coordinates_b = process_list(coordinates_b_lst)
-            if (len(coordinates_a) % 2 != 0 or len(coordinates_b) % 2 != 0 or
-                len(coordinates_a) != len(coordinates_b)):
-                raise ValueError("\nList A and List B must have the same number of "
-                                 "integers and it should be an even number. ")
-        except ValueError as err:
-            print(err)
+        prompt = input("No lists given (or missing list).\n"
+                       "Do you want to submit the sequences manually?: ")
+        if prompt.lower() not in {"y", "yes"}:
+            print("\nExiting...")
             return [], [], 0
         else:
-            print("\nSuccessfully swapped values on coordinates from "
-                  "'coordinates_a_lst' and 'coordinates_b_lst'.")
-        return coordinates_a, coordinates_b, 0
+            if not coordinates_a_lst:
+                coordinates_a_lst = list(input("\nInput for sequence A: "))
+            if not coordinates_b_lst:
+                coordinates_b_lst = list(input("\nInput for sequence B: "))
+            if not coordinates_a_lst or not coordinates_b_lst:
+                print("\nERROR: Empty List/s. Exiting...")
+                return [], [], 0
+    try:
+        coordinates_a = process_list(coordinates_a_lst)
+        coordinates_b = process_list(coordinates_b_lst)
+        if (len(coordinates_a) % 2 != 0 or len(coordinates_b) % 2 != 0 or
+            len(coordinates_a) != len(coordinates_b)):
+            raise ValueError("\nList A and List B must have the same number of "
+                             "integers and it should be an even number. ")
+    except ValueError as err:
+        print(err)
+        return [], [], 0
+    else:
+        print("\nSuccessfully swapped values on coordinates from "
+              "'coordinates_a_lst' and 'coordinates_b_lst'.")
+    return coordinates_a, coordinates_b, 0
 
 
 def user_friendly_coordinates():
@@ -116,7 +151,7 @@ def coordinate_algorithm(board):
             if (x >= minimum) and (y > maximum):
                 x, y = x, minimum
     print_board(board)
-    a, b, user_friendly = swap_coordinates_from_lists(lst1, lst2)
+    a, b, user_friendly = swap_coordinates_from_file("swaptest.txt")
     for left, right in zip(a, b):
         x_a, y_a = (int(left[0]) - user_friendly), (int(left[1]) - user_friendly)
         x_b, y_b = (int(right[0]) - user_friendly), (int(right[1]) - user_friendly)
