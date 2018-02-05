@@ -1,7 +1,7 @@
 import sys, string
 
-lst1 = [0,0,"0,3",1112]
-lst2 = [3330,(2,2),(2,1)]
+lst1 = [0,"0","0,3",1112]
+lst2 = [333022,(2,1)]
 
 
 def build_gameboard():
@@ -41,28 +41,32 @@ def swap_values_interactively():
 
 
 def process_list(lst):
-    n, n_range = 0, len(lst)
-    item_lst = []
-    while n < n_range:
-        lst_item = str(lst[n])
-        if len(lst_item) >= 2:
-            for index, element in enumerate(lst_item[:]):
-                if index % 2 == 0:
-                    tuple_data = (lst_item[index], lst_item[index + 1])
-                    item_lst.append(tuple_data)
-                    if len(lst_item) > 2:
-                        n += 1
-                    lst.insert(n, tuple_data[0])
-                    lst.insert(n + 1, tuple_data[1])
-                    if index == (len(lst_item) - 2):
-                        lst.remove(lst_item)
-                    n_range += 1 if index == 0 else int((index / 2) + 1)
-        else:
+    remove_strings = [",", "(", ")", " "]
+    new_lst, items_lst = [], []
+    try:
+        for stringy in remove_strings:
+            for n in range(len(lst)):    
+                lst[n] = str(lst[n]).replace(stringy, "")
+        for item in lst:
+            if len(item) == 1:
+                new_lst.append(item)
+            if len(item) >= 2:
+                for n in range(len(item)):
+                    new_lst.append(item[n])
+        for element in new_lst:
+            if element not in string.digits:
+                raise ValueError("ERROR: Has to be integers (0-9)! "
+                                 "\nList {0} could not be processed.".format(lst))
+        for n in range(len(new_lst)):
             if n % 2 == 0:
-                tuple_data = (lst[n], lst[n + 1])
-                item_lst.append(tuple_data)
-        n += 1
-    return item_lst
+                tuple_data = (new_lst[n], new_lst[n + 1])
+                items_lst.append(tuple_data)
+    except ValueError as err:
+        print(err)
+    else:
+        print("List {0}: OK".format(lst))
+        del lst, new_lst
+    return items_lst
 
 
 def swap_coordinates_from_lists(coordinates_a_lst=None, 
@@ -71,20 +75,12 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
         return [], [], 0
     else:
         try:
-            remove_strings = [",", "(", ")", " "]
-            for stringy in remove_strings:
-                for n in range(len(coordinates_a_lst)):    
-                    coordinates_a_lst[n] = str(coordinates_a_lst[n]).replace(stringy, "")
-                for n in range(len(coordinates_b_lst)):    
-                    coordinates_b_lst[n] = str(coordinates_b_lst[n]).replace(stringy, "")
             coordinates_a = process_list(coordinates_a_lst)
             coordinates_b = process_list(coordinates_b_lst)
-            print(coordinates_a)
-            print(coordinates_b)
             if (len(coordinates_a) % 2 != 0 or len(coordinates_b) % 2 != 0 or
                 len(coordinates_a) != len(coordinates_b)):
-                raise ValueError("List A and List B must have the same length "
-                                 "and the lenth has to be an even number. ")
+                raise ValueError("\nList A and List B must have the same number of "
+                                 "integers and it should be an even number. ")
         except ValueError as err:
             print(err)
             return [], [], 0
@@ -100,6 +96,7 @@ def user_friendly_coordinates():
         return 1
     else:
         return 0
+
 
 def coordinate_algorithm(board):
     value = 1
@@ -146,7 +143,6 @@ def print_sums(board):
         sums.update({name: [board[i][n] for i in range(4)]})
     sums.update({"diag_1": [board[i][i] for i in range(4)],
                  "diag_2": [board[3 - i][i] for i in range(4)]})
-    
     for key, value in sums.items():
         summed_numbers = 0
         for number in sums[key]:
