@@ -1,6 +1,6 @@
 import sys, string
 
-lst1 = [0,0,"0,3",1,1,12]
+lst1 = [0,0,"0,3",1112]
 lst2 = [3330,(2,2),(2,1)]
 
 
@@ -48,24 +48,18 @@ def process_list(lst):
         if len(lst_item) >= 2:
             for index, element in enumerate(lst_item[:]):
                 if index % 2 == 0:
-                    print(index)
                     tuple_data = (lst_item[index], lst_item[index + 1])
-                    print(tuple_data)
-                    
+                    item_lst.append(tuple_data)
+                    if len(lst_item) > 2:
+                        n += 1
                     lst.insert(n, tuple_data[0])
                     lst.insert(n + 1, tuple_data[1])
                     if index == (len(lst_item) - 2):
                         lst.remove(lst_item)
-                        item_lst.append(tuple_data)
-                    
-                    print(lst)
-                    n_range += 1 if index == 0 else ((index / 2) + 1)
-                    
-                    
+                    n_range += 1 if index == 0 else int((index / 2) + 1)
         else:
             if n % 2 == 0:
                 tuple_data = (lst[n], lst[n + 1])
-                print(tuple_data)
                 item_lst.append(tuple_data)
         n += 1
     return item_lst
@@ -83,7 +77,6 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
                     coordinates_a_lst[n] = str(coordinates_a_lst[n]).replace(stringy, "")
                 for n in range(len(coordinates_b_lst)):    
                     coordinates_b_lst[n] = str(coordinates_b_lst[n]).replace(stringy, "")
-            
             coordinates_a = process_list(coordinates_a_lst)
             coordinates_b = process_list(coordinates_b_lst)
             print(coordinates_a)
@@ -92,7 +85,6 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
                 len(coordinates_a) != len(coordinates_b)):
                 raise ValueError("List A and List B must have the same length "
                                  "and the lenth has to be an even number. ")
-                
         except ValueError as err:
             print(err)
             return [], [], 0
@@ -105,7 +97,7 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
 def user_friendly_coordinates():
     prompt = input("User-friendly coordinates (without zeros)?")
     if prompt.lower() in {"y", "yes"}:
-        return 
+        return 1
     else:
         return 0
 
