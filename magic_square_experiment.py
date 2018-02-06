@@ -80,13 +80,13 @@ def swap_coordinates_from_file(filename=None):
         prompt = input("Create coordinate pairs for swapping on each line?"
                        "\n[default = coordinate pairs with mixed lines]: ")
         for lino, line in enumerate(fh, start=1):
+            line_items = process_lists(list(line.strip()))
             if prompt.lower() not in {"y", "yes"}:
                 if lino % 2 != 0:
-                    coordinates_a += process_lists(list(line.strip()))
+                    coordinates_a += line_items
                 else:
-                    coordinates_b += process_lists(list(line.strip()))
+                    coordinates_b += line_items
             else:
-                line_items = process_lists(list(line.strip()))
                 for n in range(len(line_items) - 1):
                     if n % 2 == 0:
                         coordinates_a.append(line_items[n])
