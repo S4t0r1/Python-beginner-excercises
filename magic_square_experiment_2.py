@@ -5,17 +5,18 @@ lst1 = [0,0,0,3,1,1,1,2]
 
 
 def main():
-    opts, arg = cmd_options()
-    if opts.create:
+    args = cmd_options()
+    if args.create:
         board = build_gameboard()
-    if opts.edit:
-        if opts.file:
-            filename = arg if arg is not None else None
+        coordinate_algorithm(board)
+    if args.edit:
+        if args.file:
+            filename = args if args is not None else None
             option = swap_coordinates_from_file(filename)
-        elif opts.sequence:
-            lst = arg if arg is not None else None
+        elif args.sequence:
+            lst = args if args is not None else None
             option = swap_coordinates_from_lists(lst)
-        elif opts.interactive:
+        elif args.interactive:
             option = swap_values_interactively()
         coordinate_algorithm(board, option)
     print_board(board)
@@ -50,8 +51,8 @@ Filename is optional"""
                         action="store_true",
                         help=("Specialises to create a magic-square"
                               "\n[default: off]"))
-    opts, args = parser.parse_args()
-    return opts, args
+    args = parser.parse_args()
+    return args
 
 
 def build_gameboard():
@@ -194,7 +195,7 @@ def user_friendly_coordinates():
         return 0
 
 
-def coordinate_algorithm(board, option):
+def coordinate_algorithm(board, option=None):
     value = 1
     x, y = 0, 0
     minimum, maximum = 0, (4 - 1)
@@ -244,7 +245,6 @@ def print_sums(board):
         for number in sums[key]:
             summed_numbers += number
         print("{key}: {summed_numbers}".format(**locals()))
-
 
 
 main()
