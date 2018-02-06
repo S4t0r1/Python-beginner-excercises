@@ -39,8 +39,8 @@ def swap_values_interactively():
     return coordinates_a, coordinates_b, user_friendly
 
 
-def process_list(lst):
-    remove_strings = [",", "(", ")", " "]
+def process_lists(lst):
+    remove_strings = [",", "(", ")", " ", "\"", "\'"]
     new_lst, items_lst = [], []
     try:
         for stringy in remove_strings:
@@ -77,11 +77,20 @@ def swap_coordinates_from_file(filename=None):
     coordinates_a, coordinates_b = [], []
     try:
         fh = open(filename, encoding="utf-8")
+        prompt = input("Create coordinate pairs for swapping on each line?"
+                       "\n[default = coordinate pairs with mixed lines]: ")
         for lino, line in enumerate(fh, start=1):
-            if lino % 2 != 0:
-                coordinates_a += process_list(list(line.strip()))
+            if prompt.lower() not in {"y", "yes"}:
+                if lino % 2 != 0:
+                    coordinates_a += process_lists(list(line.strip()))
+                else:
+                    coordinates_b += process_lists(list(line.strip()))
             else:
-                coordinates_b += process_list(list(line.strip()))
+                line_items = process_lists(list(line.strip()))
+                for n in range(len(line_items) - 1):
+                    if n % 2 == 0:
+                        coordinates_a.append(line_items[n])
+                        coordinates_b.append(line_items[n + 1])
     except EnvironmentError as err:
         print(err)
     else:
@@ -110,8 +119,8 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
                 print("\nERROR: Empty List/s. Exiting...")
                 return [], [], 0
     try:
-        coordinates_a = process_list(coordinates_a_lst)
-        coordinates_b = process_list(coordinates_b_lst)
+        coordinates_a = process_lists(coordinates_a_lst)
+        coordinates_b = process_lists(coordinates_b_lst)
         if (len(coordinates_a) % 2 != 0 or len(coordinates_b) % 2 != 0 or
             len(coordinates_a) != len(coordinates_b)):
             raise ValueError("\nList A and List B must have the same number of "
