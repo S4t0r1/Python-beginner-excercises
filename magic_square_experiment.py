@@ -40,7 +40,10 @@ def swap_values_interactively():
 
 
 def process_lists(lst):
-    remove_strings = [",", "(", ")", " ", "\"", "\'"]
+    remove_strings = set("\ufeff")
+    for string_punc, string_whit in zip(string.punctuation, string.whitespace):
+        remove_strings.add(string_punc)
+        remove_strings.add(string_whit)
     new_lst, items_lst = [], []
     try:
         for stringy in remove_strings:
