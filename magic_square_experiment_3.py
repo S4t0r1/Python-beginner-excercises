@@ -174,7 +174,11 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
                                 coordinates_b_lst=None):
     if coordinates_a_lst is None or coordinates_b_lst is None:
         prompt = input("No lists given (or missing list).\n"
-                       "Do you want to submit the sequences manually?: ")
+                       "Present list {0}\n"
+                       "Do you want to submit the sequences manually?: "
+                       .format(coordinates_a_lst if coordinates_a_lst 
+                          else coordinates_b_lst if coordinates_b_lst
+                          else "'None'"))
         if prompt.lower() not in {"y", "yes"}:
             print("\nExiting...")
             return [], [], 0
