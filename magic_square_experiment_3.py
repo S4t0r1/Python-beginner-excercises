@@ -23,11 +23,11 @@ def main():
 
 
 def input_actions_methods():
-    prompt_action = input("[C]reate [E]dit [I]nspect: ")
-    if prompt_action in "CEI".lower():
-        prompt_method = input("[F]ile [S]eq [M]anually: ")
-        if prompt_method in "FSM".lower():
-            return prompt_action.lower(), prompt_method.lower()
+    prompt_action = input("[C]reate [E]dit [I]nspect: ").lower()
+    if prompt_action in "cei":
+        prompt_method = input("[F]ile [S]eq [M]anually: ").lower()
+        if prompt_method in "fsm":
+            return prompt_action, prompt_method
 
 
 def cmd_options():
