@@ -77,15 +77,11 @@ def build_gameboard():
 
 
 def process_lists(lst):
-    remove_strings = set("\ufeff")
-    for string_punc, string_whit in zip(string.punctuation, string.whitespace):
-        remove_strings.add(string_punc)
-        remove_strings.add(string_whit)
+    lst = [str(c) for c in lst if str(c) not in string.punctuation and
+            str(c) not in string.whitespace and str(c) not in "\ufeff"]
+    print(lst)
     new_lst, items_lst = [], []
     try:
-        for stringy in remove_strings:
-            for n in range(len(lst)):    
-                lst[n] = str(lst[n]).replace(stringy, "")
         for item in lst:
             if len(item) == 1:
                 new_lst.append(item)
