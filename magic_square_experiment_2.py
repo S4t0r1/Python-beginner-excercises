@@ -12,11 +12,11 @@ def main():
     if args.create:
         coordinate_algorithm(board)
     if args.edit:
-        filename = args if args is not None else None
-        lst = args if args is not None else None
+        filename = args if args else None
+        lst = args if args else None
         option = (swap_coordinates_from_file(filename) if args.file
                   else swap_coordinates_from_lists(lst) if args.sequence
-                  else swap_values_interactively() if args.interactive
+                  else swap_values_manually() if args.manually
                   else None)
     coordinate_algorithm(board, option)
     print_board(board)
@@ -24,8 +24,8 @@ def main():
 
 
 def input_options():
-    prompt_actions = input("[C]reate [E]dit [I]inspect")
-    prompt_methods = input("[F]ile [S]eq [I]eractive")
+    prompt_actions = input("[C]reate [E]dit [I]nspect")
+    prompt_methods = input("[F]ile [S]eq [M]anually")
 
 
 def cmd_options():
@@ -40,7 +40,7 @@ Filename is optional"""
                         action="store_true",
                         help=("Uses sequence(s) for creating/editing/inspecting magic-square"
                               "\n[default: off]"))
-    parser.add_argument("-int", "--interactive", dest="interactive",
+    parser.add_argument("-m", "--manually", dest="manually",
                         action="store_true",
                         help=("Uses manual input for creating/editing/inspecting magic-square"
                               "\n[default: off]"))
@@ -100,7 +100,7 @@ def process_lists(lst):
     return items_lst
 
 
-def swap_values_interactively():
+def swap_values_manually():
     prompt = input("Do you wish to switch some values interactively? (y,Y,yes,Yes) ")
     if prompt.lower() not in {"y", "yes"}:
         return [], [], None
