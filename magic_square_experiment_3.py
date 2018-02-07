@@ -84,11 +84,7 @@ def process_lists(lst):
             if element not in string.digits:
                 raise ValueError("\nERROR: Has to be integers (0-9)! "
                                  "\nList {0}: not processed".format(lst))
-        items_lst = []
-        for n in range(len(lst)):
-            if n % 2 == 0:
-                tuple_data = (lst[n], lst[n + 1])
-                items_lst.append(tuple_data)
+        items_lst = [(lst[n], lst[n + 1]) for n in range(len(lst)) if n % 2 == 0]
     except ValueError as err:
         print(err)
     else:
@@ -174,7 +170,7 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
         else:
             if not coordinates_a_lst:
                 coordinates_a_lst = list(input("\nInput for sequence A: "))
-            if not coordinates_b_lst:
+            elif not coordinates_b_lst:
                 coordinates_b_lst = list(input("\nInput for sequence B: "))
             if not coordinates_a_lst or not coordinates_b_lst:
                 print("\nERROR: Empty List/s. Exiting...")
