@@ -8,21 +8,24 @@ def main():
     option = None
     args = cmd_options()
     board = build_gameboard()
-    option = swap_coordinates_from_file("swaptest.txt")
+    check_if_magic_square = True if args.inspect else False
     if args.create:
         coordinate_algorithm(board)
     if args.edit:
-        if args.file:
-            filename = args if args is not None else None
-            option = swap_coordinates_from_file(filename)
-        elif args.sequence:
-            lst = args if args is not None else None
-            option = swap_coordinates_from_lists(lst)
-        elif args.interactive:
-            option = swap_values_interactively()
+        filename = args if args is not None else None
+        lst = args if args is not None else None
+        option = (swap_coordinates_from_file(filename) if args.file
+                  else swap_coordinates_from_lists(lst) if args.sequence
+                  else swap_values_interactively() if args.interactive
+                  else None)
     coordinate_algorithm(board, option)
     print_board(board)
-    print_sums(board, True)
+    print_sums(board, check_if_magic_square)
+
+
+def input_options():
+    prompt_actions = input("[C]reate [E]dit [I]inspect")
+    prompt_methods = input("[F]ile [S]eq [I]eractive")
 
 
 def cmd_options():
@@ -250,10 +253,10 @@ def print_sums(board, check_if_magic_square=False):
         summed_numbers = sum(sums[key])
         print("{key}: {summed_numbers}".format(**locals()))
     if check_if_magic_square:
-        value_sums_lst = [sum(value) for value in sums.values()]
-        return (print("Magic square ") 
-                if all(value_sums_lst[0] == value for value in value_sums_lst)
-                else print("Not a magic square"))
+        next_value_sum = sum(next(iter(sums.values())))
+        check_magic = all(sum(value) == next_value_sum for value in sums.values())
+        return (print("\nMagic square!") if check_magic is True
+                                         else print("\nNot a magic square!"))
 
 
 main()
