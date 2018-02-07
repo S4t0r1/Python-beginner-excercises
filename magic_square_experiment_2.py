@@ -5,9 +5,11 @@ lst1 = [0,0,0,3,1,1,1,2]
 
 
 def main():
+    option = None
     args = cmd_options()
+    board = build_gameboard()
+    option = swap_coordinates_from_file("swaptest.txt")
     if args.create:
-        board = build_gameboard()
         coordinate_algorithm(board)
     if args.edit:
         if args.file:
@@ -18,9 +20,9 @@ def main():
             option = swap_coordinates_from_lists(lst)
         elif args.interactive:
             option = swap_values_interactively()
-        coordinate_algorithm(board, option)
+    coordinate_algorithm(board, option)
     print_board(board)
-    print_sums(board)
+    print_sums(board, True)
 
 
 def cmd_options():
@@ -216,11 +218,12 @@ def coordinate_algorithm(board, option=None):
             if (x >= minimum) and (y > maximum):
                 x, y = x, minimum
     print_board(board)
-    a, b, user_friendly = option
-    for left, right in zip(a, b):
-        x_a, y_a = (int(left[0]) - user_friendly), (int(left[1]) - user_friendly)
-        x_b, y_b = (int(right[0]) - user_friendly), (int(right[1]) - user_friendly)
-        board[x_a][y_a], board[x_b][y_b] = board[x_b][y_b], board[x_a][y_a]
+    if option:
+        a, b, user_friendly = option
+        for left, right in zip(a, b):
+            x_a, y_a = (int(left[0]) - user_friendly), (int(left[1]) - user_friendly)
+            x_b, y_b = (int(right[0]) - user_friendly), (int(right[1]) - user_friendly)
+            board[x_a][y_a], board[x_b][y_b] = board[x_b][y_b], board[x_a][y_a]
     return board
 
 
@@ -232,22 +235,25 @@ def print_board(board):
         print("\n")
     
 
-def print_sums(board):
+def print_sums(board, check_if_magic_square=False):
     sums = {}
     print("\n")
     for n in range(4):
         name = "row_{0}".format(n + 1)
-        sums.update({name: [board[n][i] for i in range(4)]})
+        sums.update({name: {board[n][i] for i in range(4)}})
     for n in range(4):
         name = "col_{0}".format(n + 1)
-        sums.update({name: [board[i][n] for i in range(4)]})
-    sums.update({"diag_1": [board[i][i] for i in range(4)],
-                 "diag_2": [board[3 - i][i] for i in range(4)]})
-    for key, value in sums.items():
-        summed_numbers = 0
-        for number in sums[key]:
-            summed_numbers += number
+        sums.update({name: {board[i][n] for i in range(4)}})
+    sums.update({"diag_1": {board[i][i] for i in range(4)},
+                 "diag_2": {board[3 - i][i] for i in range(4)}})
+    for key in sums.keys():
+        summed_numbers = sum(sums[key])
         print("{key}: {summed_numbers}".format(**locals()))
+    if check_if_magic_square:
+        value_sums_lst = [sum(value) for value in sums.values()]
+        return (print("Magic square ") 
+                if all(value_sums_lst[0] == value for value in value_sums_lst)
+                else print("Not a magic square"))
 
 
 main()
