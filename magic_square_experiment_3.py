@@ -77,30 +77,23 @@ def build_gameboard():
 
 
 def process_lists(lst):
-    lst = [str(c) for c in lst if str(c) not in string.punctuation and
-            str(c) not in string.whitespace and str(c) not in "\ufeff"]
-    print(lst)
-    new_lst, items_lst = [], []
+    remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
+    lst = [str(c) for c in lst if str(c) not in remove_chars]
     try:
-        for item in lst:
-            if len(item) == 1:
-                new_lst.append(item)
-            if len(item) >= 2:
-                for n in range(len(item)):
-                    new_lst.append(item[n])
-        for element in new_lst:
+        for element in lst:
             if element not in string.digits:
                 raise ValueError("\nERROR: Has to be integers (0-9)! "
-                                 "\nList {0}: not processed".format(new_lst))
-        for n in range(len(new_lst)):
+                                 "\nList {0}: not processed".format(lst))
+        items_lst = []
+        for n in range(len(lst)):
             if n % 2 == 0:
-                tuple_data = (new_lst[n], new_lst[n + 1])
+                tuple_data = (lst[n], lst[n + 1])
                 items_lst.append(tuple_data)
     except ValueError as err:
         print(err)
     else:
-        print("List {0}: OK".format(new_lst))
-    del lst, new_lst
+        print("List {0}: OK".format(lst))
+    del lst
     return items_lst
 
 
