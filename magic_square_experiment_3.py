@@ -63,25 +63,15 @@ Filename is optional"""
 
 
 def build_gameboard():
-    board, value = [], 1
+    board = []
     for i in range(4):
         board_row = [0 for e in range(4)]
         board.append(board_row)
-    x, y = 0, 0
-    minimum, maximum = 0, (4 - 1)
-    while value < 17:
-        for row in board:
-            for element in row:
-                board[x][y] = value
-                value += 1
-                y += 1
-            x += 1
-            if (x < minimum) and (y > maximum):
-                x, y = maximum, minimum
-            if (x < minimum) and (y <= maximum):
-                x, y = maximum, y
-            if (x >= minimum) and (y > maximum):
-                x, y = x, minimum
+    value = 1
+    for x in range(4):
+        for y in range(4):
+            board[x][y] += value
+            value += 1
     print_board(board)
     return board
 
