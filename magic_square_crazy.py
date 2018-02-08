@@ -74,9 +74,7 @@ def build_gameboard():
 
 
 def process_lists(lst, lst2=None):
-    list_count = 0 if lst2 else 1
-    items_lst2 = []
-    while list_count < 2:
+    def process_list(lst):
         remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
         lst = [str(c) for c in lst if str(c) not in remove_chars]
         try:
@@ -84,20 +82,19 @@ def process_lists(lst, lst2=None):
                 if element not in string.digits:
                     raise ValueError("\nERROR: Has to be integers (0-9)! "
                                      "\nList {0}: not processed".format(lst))
-            items_lst = [(lst[n], lst[n + 1]) for n in range(len(lst)) if n % 2 == 0]
+                items_lst = [(lst[n], lst[n + 1]) for n in range(len(lst)) if n % 2 == 0]
         except ValueError as err:
             print(err)
         else:
             print("List {0}: OK".format(lst))
-            lst = lst2 if lst2 else None
-            list_count += 1
-    print(items_lst, "x")
-    print(items_lst2, "o")
-    return items_lst, items_lst2
+        return items_lst
+    lst2 = process_list(lst2) if lst2 else None
+    print(lst2)
+    return process_list(lst), lst2
 
 
 def swap_values_manually():
-    prompt = input("Do you wish to switch some values interactively? (y,Y,yes,Yes) ")
+    prompt = input("Do you wish to switch some values interactively?: ")
     if prompt.lower() not in {"y", "yes"}:
         return [], [], None
     user_friendly = user_friendly_coordinates()
