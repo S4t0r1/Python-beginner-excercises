@@ -73,48 +73,51 @@ def build_gameboard():
     return board
 
 
-def process_lists(lst):
-    remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
-    lst = [str(c) for c in lst if str(c) not in remove_chars]
-    try:
-        for element in lst:
-            if element not in string.digits:
-                raise ValueError("\nERROR: Has to be integers (0-9)! "
-                                 "\nList {0}: not processed".format(lst))
-        items_lst = [(lst[n], lst[n + 1]) for n in range(len(lst)) if n % 2 == 0]
-    except ValueError as err:
-        print(err)
-    else:
-        print("List {0}: OK".format(lst))
-    del lst
-    return items_lst
+def process_lists(lst=None, lst2=None):
+    if not lst and not lst2:
+        return
+    def process_list(lst):
+        remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
+        lst = [str(c) for c in lst if str(c) not in remove_chars]
+        try:
+            for element in lst:
+                if element not in string.digits:
+                    raise ValueError("\nERROR: Has to be integers (0-9)! ")
+            if not len(lst) % 2 == 0:
+                raise IndexError("\nERROR: Must be coordinate pair/s (x,y)!")
+            items_lst = [(lst[n], lst[n + 1]) for n in range(len(lst)) if n % 2 == 0]
+        except (ValueError, IndexError) as err:
+            print(err, "\nList {0}: not processed".format(lst))
+        else:
+            print("List {0}: OK".format(lst))
+            return items_lst
+    if len(lst) != len(lst2):
+        raise IndexError()
+    return (process_list(lst), process_list(lst2)) if lst2 else process_list(lst)
 
 
 def swap_values_manually():
-    prompt = input("Do you wish to switch some values interactively? (y,Y,yes,Yes) ")
+    prompt = input("Do you wish to switch some values interactively?: ")
     if prompt.lower() not in {"y", "yes"}:
         return [], [], None
     user_friendly = user_friendly_coordinates()
     coordinates_a, coordinates_b = [], []
+    a = True
     while True:
+        msg = "\nChoose x,y for {0}: ".format("A" if a else "B")
         try:
-            a = tuple(input("\nChoose x,y for left: ").replace(",", ""))
-            b = tuple(input("\nChoose x,y for right: ").replace(",", ""))
-            if not a or not b:
+            prompt = process_lists(input(msg))
+            if not prompt:
                 break
             else:
-                if len(a) != 2 or len(b) != 2:
-                    raise ValueError("Can have only 2 numbers for [x,y /or xy]!")
-                for value_a, value_b in zip(a, b):
-                    if (value_a not in string.digits or 
-                        value_b not in string.digits):
-                        raise ValueError("ERROR: Has to be integers (0-9)!")
-                coordinates_a.append(a) 
-                coordinates_b.append(b)
+                coordinates = coordinates_a if a else coordinates_b
+                coordinates += prompt
+            a = False if a else True
         except ValueError as err:
             print(err)
         else:
-            print("\nSuccessfully swapped values to [right/left].")
+            print(("\nSuccessfully queued coordinates for "
+                   "swapping values to [B|A]\n") if a else "")
     return coordinates_a, coordinates_b, user_friendly
 
 
@@ -142,10 +145,11 @@ def swap_coordinates_from_file(filename=None):
                     if n % 2 == 0:
                         coordinates_a.append(line_items[n])
                         coordinates_b.append(line_items[n + 1])
+            print(line_items)
     except EnvironmentError as err:
         print(err)
     else:
-        print("\nSuccessfully swapped values")
+        print("\nSuccessfully queued coordinates for swapping values\n")
     finally:
         if fh is not None:
             fh.close()
@@ -173,8 +177,7 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
                 print("\nERROR: Empty List/s. Exiting...")
                 return [], [], 0
     try:
-        coordinates_a = process_lists(coordinates_a_lst)
-        coordinates_b = process_lists(coordinates_b_lst)
+        coordinates_a, coordinates_b = process_lists(coordinates_a_lst, coordinates_b_lst)
         if (len(coordinates_a) % 2 != 0 or len(coordinates_b) % 2 != 0 or
             len(coordinates_a) != len(coordinates_b)):
             raise ValueError("\nList A and List B must have the same number of "
@@ -183,8 +186,8 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
         print(err)
         return [], [], 0
     else:
-        print("\nSuccessfully swapped values on coordinates from "
-              "'coordinates_a_lst' and 'coordinates_b_lst'.")
+        print("\nSuccessfully queued coordinates "
+              "for swapping values to [B|A]\n")
     return coordinates_a, coordinates_b, 0
 
 
@@ -211,6 +214,7 @@ def coordinate_algorithm(board, option=None):
             x_a, y_a = (int(left[0]) - user_friendly), (int(left[1]) - user_friendly)
             x_b, y_b = (int(right[0]) - user_friendly), (int(right[1]) - user_friendly)
             board[x_a][y_a], board[x_b][y_b] = board[x_b][y_b], board[x_a][y_a]
+            print("Swapped values successfully")
     print_board(board)
     return board
 
