@@ -88,9 +88,7 @@ def process_lists(lst, lst2=None):
         else:
             print("List {0}: OK".format(lst))
         return items_lst
-    lst2 = process_list(lst2) if lst2 else None
-    print(lst2)
-    return process_list(lst), lst2
+    return (process_list(lst), lst2) if lst2 else process_list(lst)
 
 
 def swap_values_manually():
@@ -145,6 +143,7 @@ def swap_coordinates_from_file(filename=None):
                     if n % 2 == 0:
                         coordinates_a.append(line_items[n])
                         coordinates_b.append(line_items[n + 1])
+            print(line_items)
     except EnvironmentError as err:
         print(err)
     else:
