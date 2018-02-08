@@ -63,10 +63,7 @@ Filename is optional"""
 
 
 def build_gameboard():
-    board = []
-    for i in range(4):
-        board_row = [0 for e in range(4)]
-        board.append(board_row)
+    board = [[0 for e in range(4)] for i in range(4)]
     value = 1
     for x in range(4):
         for y in range(4):
