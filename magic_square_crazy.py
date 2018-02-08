@@ -73,22 +73,25 @@ def build_gameboard():
     return board
 
 
-def process_lists(lst, lst2=None):
+def process_lists(lst=None, lst2=None):
+    if not lst and not lst2:
+        return
     def process_list(lst):
         remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
         lst = [str(c) for c in lst if str(c) not in remove_chars]
         try:
             for element in lst:
                 if element not in string.digits:
-                    raise ValueError("\nERROR: Has to be integers (0-9)! "
-                                     "\nList {0}: not processed".format(lst))
-                items_lst = [(lst[n], lst[n + 1]) for n in range(len(lst)) if n % 2 == 0]
-        except ValueError as err:
-            print(err)
+                    raise ValueError("\nERROR: Has to be integers (0-9)! ")
+            if not len(lst) % 2 == 0:
+                raise IndexError("\nERROR: Must be coordinate pair/s (x,y)!")
+            items_lst = [(lst[n], lst[n + 1]) for n in range(len(lst)) if n % 2 == 0]
+        except (ValueError, IndexError) as err:
+            print(err, "\nList {0}: not processed".format(lst))
         else:
             print("List {0}: OK".format(lst))
-        return items_lst
-    return (process_list(lst), lst2) if lst2 else process_list(lst)
+            return items_lst
+    return (process_list(lst), process_list(lst2)) if lst2 else process_list(lst)
 
 
 def swap_values_manually():
@@ -96,26 +99,23 @@ def swap_values_manually():
     if prompt.lower() not in {"y", "yes"}:
         return [], [], None
     user_friendly = user_friendly_coordinates()
+    count = 0
     coordinates_a, coordinates_b = [], []
     while True:
+        msg = "\nChoose x,y for {0}: ".format("A" if count % 2 == 0 else "B")
         try:
-            a = tuple(input("\nChoose x,y for left: ").replace(",", ""))
-            b = tuple(input("\nChoose x,y for right: ").replace(",", ""))
-            if not a or not b:
+            prompt = process_lists(input(msg))
+            if not prompt:
                 break
             else:
-                if len(a) != 2 or len(b) != 2:
-                    raise ValueError("Can have only 2 numbers for [x,y /or xy]!")
-                for value_a, value_b in zip(a, b):
-                    if (value_a not in string.digits or 
-                        value_b not in string.digits):
-                        raise ValueError("ERROR: Has to be integers (0-9)!")
-                coordinates_a.append(a) 
-                coordinates_b.append(b)
+                coordinates = coordinates_a if count % 2 == 0 else coordinates_b
+                coordinates += prompt
+                count += 1
         except ValueError as err:
             print(err)
         else:
-            print("\nSuccessfully swapped values to [right/left].")
+            print(("\nSuccessfully swapped values to [right|left].") 
+                                          if count % 2 == 0 else "")
     return coordinates_a, coordinates_b, user_friendly
 
 
