@@ -97,6 +97,7 @@ def process_lists(lst=None, lst2=None):
 def swap_values_manually():
     prompt = input("Do you wish to switch some values interactively?: ")
     if prompt.lower() not in {"y", "yes"}:
+        print("Exiting...")
         return [], [], None
     user_friendly = user_friendly_coordinates()
     coordinates_a, coordinates_b = [], []
@@ -143,7 +144,6 @@ def swap_coordinates_from_file(filename=None):
                     if n % 2 == 0:
                         coordinates_a.append(line_items[n])
                         coordinates_b.append(line_items[n + 1])
-            print(line_items)
     except EnvironmentError as err:
         print(err)
     else:
@@ -164,7 +164,7 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
                           else coordinates_b_lst if coordinates_b_lst
                           else "'None'"))
         if prompt.lower() not in {"y", "yes"}:
-            print("\nExiting...")
+            print("Exiting...")
             return [], [], 0
         else:
             if not coordinates_a_lst:
@@ -221,7 +221,7 @@ def print_board(board):
         for element in row:
             print("{0:2d}".format(element), end="  ")
         print("\n")
-    
+
 
 def print_sums(board, check_if_magic_square=False):
     sums = {}
