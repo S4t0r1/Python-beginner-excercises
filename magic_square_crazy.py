@@ -73,12 +73,12 @@ def build_gameboard():
     return board
 
 
-def process_lists(lst=None, lst2=None):
-    if not lst and not lst2:
-        return
-    def process_list(lst):
-        remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
+def process_lists(*args):
+    remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
+    for lst in args:
         lst = [str(c) for c in lst if str(c) not in remove_chars]
+        if not lst:
+            return
         try:
             for element in lst:
                 if element not in string.digits:
@@ -90,15 +90,13 @@ def process_lists(lst=None, lst2=None):
             print(err, "\nList {0}: not processed".format(lst))
         else:
             print("List {0}: OK".format(lst))
-            return items_lst
-    if len(lst) != len(lst2):
-        raise IndexError()
-    return (process_list(lst), process_list(lst2)) if lst2 else process_list(lst)
+    return items_lst
 
 
 def swap_values_manually():
     prompt = input("Do you wish to switch some values interactively?: ")
     if prompt.lower() not in {"y", "yes"}:
+        print("Exiting...")
         return [], [], None
     user_friendly = user_friendly_coordinates()
     coordinates_a, coordinates_b = [], []
@@ -166,7 +164,7 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
                           else coordinates_b_lst if coordinates_b_lst
                           else "'None'"))
         if prompt.lower() not in {"y", "yes"}:
-            print("\nExiting...")
+            print("Exiting...")
             return [], [], 0
         else:
             if not coordinates_a_lst:
@@ -193,10 +191,7 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
 
 def user_friendly_coordinates():
     prompt = input("User-friendly coordinates (without zeros)?")
-    if prompt.lower() in {"y", "yes"}:
-        return 1
-    else:
-        return 0
+    return 1 if prompt.lower() in {"y", "yes"} else 0
 
 
 def coordinate_algorithm(board, option=None):
@@ -214,7 +209,8 @@ def coordinate_algorithm(board, option=None):
             x_a, y_a = (int(left[0]) - user_friendly), (int(left[1]) - user_friendly)
             x_b, y_b = (int(right[0]) - user_friendly), (int(right[1]) - user_friendly)
             board[x_a][y_a], board[x_b][y_b] = board[x_b][y_b], board[x_a][y_a]
-            print("Swapped values successfully")
+            print("Swapped values {0} and {1} successfully"
+                  .format(board[x_b][y_b], board[x_a][y_a]))
     print_board(board)
     return board
 
