@@ -75,9 +75,9 @@ def build_gameboard():
 
 def process_lists(*args):
     lsts = []
-    if not args:
-        return
     for lst in args:
+        if not lst:
+            return
         def process_list(lst):
             remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
             lst = [str(c) for c in lst if str(c) not in remove_chars]
@@ -96,6 +96,7 @@ def process_lists(*args):
         lst = process_list(lst)
         lsts.append(lst)
     return lsts if len(args) > 1 else lst
+
 
 def swap_values_manually():
     prompt = input("Do you wish to switch some values interactively?: ")
