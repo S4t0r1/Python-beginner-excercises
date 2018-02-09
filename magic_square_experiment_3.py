@@ -73,12 +73,14 @@ def build_gameboard():
     return board
 
 
-def process_lists(lst=None, lst2=None):
-    if not lst and not lst2:
-        return
-    def process_list(lst):
-        remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
+def process_lists(*args, items_lsts=[]):
+    remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
+    for lst in args:
+        if not lst:
+            return
         lst = [str(c) for c in lst if str(c) not in remove_chars]
+        if not lst:
+            return
         try:
             for element in lst:
                 if element not in string.digits:
@@ -90,8 +92,8 @@ def process_lists(lst=None, lst2=None):
             print(err, "\nList {0}: not processed".format(lst))
         else:
             print("List {0}: OK".format(lst))
-            return items_lst
-    return (process_list(lst), process_list(lst2)) if lst2 else process_list(lst)
+            items_lsts.append(items_lst)
+    return items_lsts if len(args) > 1 else items_lst
 
 
 def swap_values_manually():
@@ -144,6 +146,7 @@ def swap_coordinates_from_file(filename=None):
                     if n % 2 == 0:
                         coordinates_a.append(line_items[n])
                         coordinates_b.append(line_items[n + 1])
+            print(line_items)
     except EnvironmentError as err:
         print(err)
     else:
@@ -221,7 +224,7 @@ def print_board(board):
         for element in row:
             print("{0:2d}".format(element), end="  ")
         print("\n")
-
+    
 
 def print_sums(board, check_if_magic_square=False):
     sums = {}
