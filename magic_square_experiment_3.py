@@ -75,12 +75,11 @@ def build_gameboard():
 
 def process_lists(*args, items_lsts=[]):
     remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
+    print(len(args))
     for lst in args:
         if not lst:
             return
         lst = [str(c) for c in lst if str(c) not in remove_chars]
-        if not lst:
-            return
         try:
             for element in lst:
                 if element not in string.digits:
@@ -92,8 +91,9 @@ def process_lists(*args, items_lsts=[]):
             print(err, "\nList {0}: not processed".format(lst))
         else:
             print("List {0}: OK".format(lst))
-            items_lsts.append(items_lst)
-    return items_lsts if len(args) > 1 else items_lst
+            if len(args) > 1:
+                items_lsts.append(items_lst)
+    return items_lsts if items_lsts else items_lst
 
 
 def swap_values_manually():
