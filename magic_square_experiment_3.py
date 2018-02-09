@@ -75,7 +75,6 @@ def build_gameboard():
 
 def process_lists(*args, items_lsts=[]):
     remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
-    print(len(args))
     for lst in args:
         if not lst:
             return
@@ -90,29 +89,35 @@ def process_lists(*args, items_lsts=[]):
         except (ValueError, IndexError) as err:
             print(err, "\nList {0}: not processed".format(lst))
         else:
-            print("List {0}: OK".format(lst))
+            print("List {0}: OK{1}".format(lst, "\n" if len(lst) > 4 else ""))
             if len(args) > 1:
                 items_lsts.append(items_lst)
     return items_lsts if items_lsts else items_lst
 
 
+def in_line_coordinate_pairs():
+    prompt = input("Create coordinate pairs for swapping on each line?"
+                       "\n[default = coordinate pairs with mixed lines]: ")
+    return 0 if prompt.lower() not in {"y", "yes"} else 1
+
+
 def swap_values_manually():
-    prompt = input("Do you wish to switch some values interactively?: ")
-    if prompt.lower() not in {"y", "yes"}:
-        print("Exiting...")
-        return [], [], None
+    in_line = in_line_coordinate_pairs()
     user_friendly = user_friendly_coordinates()
     coordinates_a, coordinates_b = [], []
     a = True
     while True:
-        msg = "\nChoose x,y for {0}: ".format("A" if a else "B")
+        msg = ("\nChoose x,y for {0}: ".format("A" if a else "B") 
+                if not in_line else "\nChoose (x_A, y_A), (x_B, y_B) "
+                                    "coordinate pairs for swapping: ")
         try:
             prompt = process_lists(input(msg))
             if not prompt:
                 break
-            else:
-                coordinates = coordinates_a if a else coordinates_b
-                coordinates += prompt
+            if in_line:
+                coordinates_a, coordinates_b = prompt[::2], prompt[1::2]
+            coordinates = coordinates_a if a else coordinates_b
+            coordinates += prompt
             a = False if a else True
         except ValueError as err:
             print(err)
@@ -131,12 +136,11 @@ def swap_coordinates_from_file(filename=None):
     fh = None
     coordinates_a, coordinates_b = [], []
     try:
+        in_line = in_line_coordinate_pairs()
         fh = open(filename, encoding="utf-8")
-        prompt = input("Create coordinate pairs for swapping on each line?"
-                       "\n[default = coordinate pairs with mixed lines]: ")
         for lino, line in enumerate(fh, start=1):
             line_items = process_lists(list(line.strip()))
-            if prompt.lower() not in {"y", "yes"}:
+            if not in_line:
                 if lino % 2 != 0:
                     coordinates_a += line_items
                 else:
@@ -146,15 +150,16 @@ def swap_coordinates_from_file(filename=None):
                     if n % 2 == 0:
                         coordinates_a.append(line_items[n])
                         coordinates_b.append(line_items[n + 1])
-            print(line_items)
-    except EnvironmentError as err:
+        if not (len(coordinates_a) == len(coordinates_b)):
+            raise IndexError("Must be even number of lines if pairs from mixed lines")
+    except (EnvironmentError, IndexError) as err:
         print(err)
     else:
         print("\nSuccessfully queued coordinates for swapping values\n")
+        return coordinates_a, coordinates_b, 0
     finally:
         if fh is not None:
             fh.close()
-    return coordinates_a, coordinates_b, 0
 
 
 def swap_coordinates_from_lists(coordinates_a_lst=None, 
@@ -193,7 +198,7 @@ def swap_coordinates_from_lists(coordinates_a_lst=None,
 
 
 def user_friendly_coordinates():
-    prompt = input("User-friendly coordinates (without zeros)?")
+    prompt = input("User-friendly coordinates (without zeros)?: ")
     return 1 if prompt.lower() in {"y", "yes"} else 0
 
 
