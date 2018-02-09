@@ -74,24 +74,28 @@ def build_gameboard():
 
 
 def process_lists(*args):
-    remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
+    lsts = []
+    if not args:
+        return
     for lst in args:
-        lst = [str(c) for c in lst if str(c) not in remove_chars]
-        if not lst:
-            return
-        try:
-            for element in lst:
-                if element not in string.digits:
-                    raise ValueError("\nERROR: Has to be integers (0-9)! ")
-            if not len(lst) % 2 == 0:
-                raise IndexError("\nERROR: Must be coordinate pair/s (x,y)!")
-            items_lst = [(lst[n], lst[n + 1]) for n in range(len(lst)) if n % 2 == 0]
-        except (ValueError, IndexError) as err:
-            print(err, "\nList {0}: not processed".format(lst))
-        else:
-            print("List {0}: OK".format(lst))
-    return items_lst
-
+        def process_list(lst):
+            remove_chars = {c for c in string.punctuation + string.whitespace + "\ufeff"}
+            lst = [str(c) for c in lst if str(c) not in remove_chars]
+            try:
+                for element in lst:
+                    if element not in string.digits:
+                        raise ValueError("\nERROR: Has to be integers (0-9)! ")
+                if not len(lst) % 2 == 0:
+                    raise IndexError("\nERROR: Must be coordinate pair/s (x,y)!")
+                items_lst = [(lst[n], lst[n + 1]) for n in range(len(lst)) if n % 2 == 0]
+            except (ValueError, IndexError) as err:
+                print(err, "\nList {0}: not processed".format(lst))
+            else:
+                print("List {0}: OK".format(lst))
+                return items_lst
+        lst = process_list(lst)
+        lsts.append(lst)
+    return lsts if len(args) > 1 else lst
 
 def swap_values_manually():
     prompt = input("Do you wish to switch some values interactively?: ")
@@ -143,7 +147,6 @@ def swap_coordinates_from_file(filename=None):
                     if n % 2 == 0:
                         coordinates_a.append(line_items[n])
                         coordinates_b.append(line_items[n + 1])
-            print(line_items)
     except EnvironmentError as err:
         print(err)
     else:
@@ -221,7 +224,7 @@ def print_board(board):
         for element in row:
             print("{0:2d}".format(element), end="  ")
         print("\n")
-    
+
 
 def print_sums(board, check_if_magic_square=False):
     sums = {}
