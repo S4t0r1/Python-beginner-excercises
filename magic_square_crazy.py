@@ -13,10 +13,7 @@ def main():
     if "e" in action or args.edit:
         filename = "swaptest.txt" if "f" in method else None
         lst = lst1 if "s" in method else None
-        option = (swap_coordinates_from_file(filename) if "f" in method or args.file
-                 else swap_coordinates_from_lists(lst) if "s" in method or args.sequence
-                 else swap_values_manually() if "m" in method or args.manually
-                 else None)
+        option = optionizer(method, filename, lst)
     check_if_magic_square = True if "i" in action or args.inspect else False
     coordinate_algorithm(board, option)
     print_sums(board, check_if_magic_square)
@@ -26,32 +23,20 @@ def input_actions_methods():
     options_msg = "[C]reate "
     prompt_action = input(options_msg + ":").lower()
     while True:
-        try:
-            if prompt_action in "c":
-                options_msg += "[E]dit] [I]nspect "
-                prompt_action = input(options_msg + ":").lower()
-            else:
-                raise ValueError("ERROR: Invalid input. Has to be c/C")
+        if prompt_action in "c":
+            options_msg += "[E]dit] [I]nspect "
+            prompt_action = input(options_msg + ":").lower()
             if prompt_action in "cei":
                 prompt_method = input("[F]ile [S]eq [M]anually: ").lower()
                 if prompt_method in "fsm":
                     return prompt_action, prompt_method
-                else:
-                    raise ValueError("ERROR: Invalid input. Has to be a letter of 'fFsSmM'")
-            else:
-                raise ValueError("ERROR: Invalid input. Has to be a letter of 'cCeEiI'")
-        except ValueError as err:
-            print(err)
+
 
 def optionizer(method, filename, lst):
-    if "f" in method:
-        return swap_coordinates_from_file(filename)
-    elif "s" in method:
-        return swap_coordinates_from_lists(lst)
-    elif "m" in method:
-        return swap_values_manually()
-    else:
-        print("No editing methods chosen. Exiting..")
+    return (swap_coordinates_from_file(filename) if "f" in method
+           else swap_coordinates_from_lists(lst) if "s" in method
+           else swap_values_manually() if "m" in method 
+           else print("No methods chosen. Exiting.."))
 
 
 def cmd_options():
