@@ -1,3 +1,4 @@
+
 def attack(inFile, outFile):
   fi = open(inFile, 'r', encoding='utf8')
   newtxt = []
@@ -6,13 +7,17 @@ def attack(inFile, outFile):
       newtxt.append(newline)
   newtxt = ''.join(newtxt)
   print(newtxt)
+  print(len(newtxt))
   
   alphabet = "abcdefghijklmnopqrstuvwxyz"
   alphabet_dict = {alphabet.index(letter): letter for letter in alphabet}
   
   ic_lst = []
-  period_sub_ics = []
+  all_periods_ics = []
   for i in range(1, len(newtxt)):
+      period_sub_ics = []
+      if i > 500:
+          break
       for y in range(i):
           sequence = newtxt[y::i]
           if len(sequence) == 1:
@@ -24,37 +29,59 @@ def attack(inFile, outFile):
           period_sub_ics.append(ic_avg)
           ic_lst = []
       period_ic = sum(period_sub_ics) / len(period_sub_ics)
-      period_sub_ics = []
+      all_periods_ics.append(period_ic)
       print(i, period_ic)
+  if len(all_periods_ics) > 1:
+      overall_avg_period_ic = sum(all_periods_ics) / len(all_periods_ics)
+      keylen_candidates = [(keylen, ic) for keylen, ic in enumerate(all_periods_ics, start=1)
+                                                         if ic > overall_avg_period_ic * 1.2]
+      keylen = min(k[0] for k in keylen_candidates)
+  print(keylen)
+  
   
   ics_lst = [0.0815, 0.0144, 0.0276, 0.0379, 0.1311, 0.0292, 0.0199, 0.0526, 0.0635, 
              0.0013, 0.0042, 0.0339, 0.0254, 0.071, 0.08, 0.0198, 0.0012, 0.0683, 
              0.061,  0.1047, 0.0246, 0.0092, 0.0154, 0.0017, 0.0198, 0.0008]
   ic_english_letters = {letter: ic for letter, ic in zip(alphabet, ics_lst)}
   
-  our_sequence = newtxt[::7]
-  avg_chi_lst = []
-  for i in range(len(alphabet)):
-      next_sequence = []
-      for letter in our_sequence:
-          for key in alphabet_dict.keys():
-              if alphabet_dict[key] == letter:
-                  keynum = 26 + (key - i) if (key - i) < 0 else key - i
-                  letter = alphabet_dict[keynum]
-                  next_sequence.append(letter)
-                  break
-      next_sequence = ''.join(next_sequence)
-      chi_lst = []
-      for letter in next_sequence:
-          expected_count = ic_english_letters[letter] * len(next_sequence)
-          chi_sq = ((next_sequence.count(letter) - expected_count) ** 2) / expected_count
-          chi_lst.append(chi_sq)
-      avg_chi = sum(chi_lst) / len(chi_lst)
-      avg_chi_lst.append(avg_chi)
-      print(i, next_sequence, avg_chi)
-  key_letter = min(avg_chi_lst)
-  print(key_letter)
+  s, key_cipher = 0, ''
+  while s < keylen:
+      our_sequence = newtxt[s::keylen]
+      avg_chi_lst = []
+      for i in range(len(alphabet)):
+          next_sequence = []
+          for letter in our_sequence:
+              for key in alphabet_dict.keys():
+                  if alphabet_dict[key] == letter:
+                      keynum = 26 + (key - i) if (key - i) < 0 else key - i
+                      letter = alphabet_dict[keynum]
+                      next_sequence.append(letter)
+                      break
+          next_sequence = ''.join(next_sequence)
+          chi_lst = []
+          for letter in next_sequence:
+              expected_count = ic_english_letters[letter] * len(next_sequence)
+              chi_sq = ((next_sequence.count(letter) - expected_count) ** 2) / expected_count
+              chi_lst.append(chi_sq)
+          avg_chi = sum(chi_lst) / len(chi_lst)
+          avg_chi_lst.append(avg_chi)
+          print(i, next_sequence, avg_chi)
+      key_letter = alphabet_dict[avg_chi_lst.index(min(avg_chi_lst))]
+      key_cipher += key_letter
+      s += 1
+  print(key_cipher)
+  
+  fh = open(inFile, 'r', encoding='utf8')
+  rev_alpha_dict = {v: k  for k, v in alphabet_dict.items()}
+  rawtxt = ''.join(line for line in fh)
+  expand = (len(rawtxt) // len(key_cipher)) + 1
+  newstr = ''
+  for char, letter in zip(rawtxt, key_cipher * expand):
+      if char.isalpha():
+          charv, letterv = rev_alpha_dict[char], rev_alpha_dict[letter]
+          new_charv = 26 + (charv - letterv) if (charv - letterv) < 0 else charv - letterv
+          char = alphabet_dict[new_charv]
+      newstr += char
+  print(newstr)
       
-
-
 attack("test2.txt", "out1.txt")
