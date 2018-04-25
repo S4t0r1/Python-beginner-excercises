@@ -34,7 +34,7 @@ def attack(inFile, outFile):
   if len(all_periods_ics) > 1:
       overall_avg_period_ic = sum(all_periods_ics) / len(all_periods_ics)
       keylen_candidates = [(keylen, ic) for keylen, ic in enumerate(all_periods_ics, start=1)
-                                                         if ic > overall_avg_period_ic * 1.2]
+                                                         if ic > overall_avg_period_ic]
       keylen = min(k[0] for k in keylen_candidates)
   print(keylen)
   
@@ -71,26 +71,19 @@ def attack(inFile, outFile):
       s += 1
   print(key_cipher)
   
-  key_cipher = 'vgnr'
-  fh = open(inFile, 'r', encoding='utf8')
   rev_alpha_dict = {v: k  for k, v in alphabet_dict.items()}
-  rawtxt = ''.join(line for line in fh)
-  expand = (len(rawtxt) // len(key_cipher)) + 1
+  expand = (len(newtxt) // len(key_cipher)) + 1
   newstr = ''
-  for char, letter in zip(rawtxt, key_cipher * expand):
-      if char.isalpha():
-          charv, letterv = rev_alpha_dict[char], rev_alpha_dict[letter]
-          new_charv = 26 + (charv - letterv) if (charv - letterv) < 0 else charv - letterv
-          char = alphabet_dict[new_charv]
+  for char, letter in zip(newtxt, key_cipher * expand):
+      charv, letterv = rev_alpha_dict[char], rev_alpha_dict[letter]
+      new_charv = 26 + (charv - letterv) if (charv - letterv) < 0 else charv - letterv
+      char = alphabet_dict[new_charv]
       newstr += char
   print(newstr)
   
-  newstrtest = "".join(char for char in newstr if char.isalpha())
-  ic_lst = []
-  for letter in alphabet:
-      ic = newstrtest.count(letter) * (newstrtest.count(letter) - 1)
-      ic_lst.append(ic)
-  ic_avg = sum(ic_lst) / (len(newstrtest) * (len(newstrtest) - 1))
-  print(ic_avg)
-      
-attack("test2.txt", "out1.txt")
+  fh = open(inFile, 'r', encoding='utf8')
+  rawtxt = ''.join(line for line in fh)
+  
+
+  
+attack("input1.txt", "out1.txt")
