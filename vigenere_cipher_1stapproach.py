@@ -16,7 +16,7 @@ def attack(inFile, outFile):
   all_periods_ics = []
   for i in range(1, len(newtxt)):
       period_sub_ics = []
-      if i > 500:
+      if i > 50:
           break
       for y in range(i):
           sequence = newtxt[y::i]
@@ -71,6 +71,7 @@ def attack(inFile, outFile):
       s += 1
   print(key_cipher)
   
+  key_cipher = 'vgnr'
   fh = open(inFile, 'r', encoding='utf8')
   rev_alpha_dict = {v: k  for k, v in alphabet_dict.items()}
   rawtxt = ''.join(line for line in fh)
@@ -83,5 +84,13 @@ def attack(inFile, outFile):
           char = alphabet_dict[new_charv]
       newstr += char
   print(newstr)
+  
+  newstrtest = "".join(char for char in newstr if char.isalpha())
+  ic_lst = []
+  for letter in alphabet:
+      ic = newstrtest.count(letter) * (newstrtest.count(letter) - 1)
+      ic_lst.append(ic)
+  ic_avg = sum(ic_lst) / (len(newstrtest) * (len(newstrtest) - 1))
+  print(ic_avg)
       
 attack("test2.txt", "out1.txt")
