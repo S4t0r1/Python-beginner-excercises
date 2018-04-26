@@ -1,4 +1,5 @@
 
+
 def attack(inFile, outFile):
   fi = open(inFile, 'r', encoding='utf8')
   newtxt = []
@@ -72,18 +73,17 @@ def attack(inFile, outFile):
   print(key_cipher)
   
   rev_alpha_dict = {v: k  for k, v in alphabet_dict.items()}
-  expand = (len(newtxt) // len(key_cipher)) + 1
-  newstr = ''
-  for char, letter in zip(newtxt, key_cipher * expand):
-      charv, letterv = rev_alpha_dict[char], rev_alpha_dict[letter]
-      new_charv = 26 + (charv - letterv) if (charv - letterv) < 0 else charv - letterv
-      char = alphabet_dict[new_charv]
+  fh = open(inFile, 'r', encoding='utf8')
+  rawtxt = ''.join(line for line in fh)
+  newstr, i = '', 0
+  for char in rawtxt:
+      if char.isalpha():
+          charv, letterv = rev_alpha_dict[char], rev_alpha_dict[key_cipher[i]]
+          new_charv = 26 + (charv - letterv) if (charv - letterv) < 0 else charv - letterv
+          char = alphabet_dict[new_charv]
+          i =  i + 1 if i < (len(key_cipher) - 1) else 0
       newstr += char
   print(newstr)
   
-  fh = open(inFile, 'r', encoding='utf8')
-  rawtxt = ''.join(line for line in fh)
-  
-
   
 attack("input1.txt", "out1.txt")
