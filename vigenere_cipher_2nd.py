@@ -1,4 +1,5 @@
 
+
 alphabet = "abcdefghijklmnopqrstuvwxyz"
 shift_dict = {letter: alphabet.index(letter) for letter in alphabet}
 
@@ -21,29 +22,22 @@ for i in range(1, 51):
         period_sub_ics.append(sum(ic_lst) / (len(sequence) * (len(sequence) - 1)))
     all_periods_ics.append(sum(period_sub_ics) / len(period_sub_ics))
 
-if len(all_periods_ics) > 1:
-    keylen_candidates = [(keylen, ic) for keylen, ic in enumerate(all_periods_ics, start=1)
-                                       if ic > sum(all_periods_ics) / len(all_periods_ics)]
-    keylen = min(k[0] for k in keylen_candidates)
+keylen_candidates = [(keylen, ic) for keylen, ic in enumerate(all_periods_ics, start=1)
+                                   if ic > sum(all_periods_ics) / len(all_periods_ics)]
+keylen = min(k[0] for k in keylen_candidates)
 
 s, key_cipher = 0, []
 while s < keylen:
-    init_str = cleantxt[s::keylen]
-    avg_chi_lst = []
+    init_str, avg_chi_lst = cleantxt[s::keylen], []
     for i in range(len(alphabet)):
-        new_str = []
-        for let in init_str:
-            let = (chr(ord(let) - i) if i <= shift_dict[let] else chr(ord(let) + (26 - i)))
-            new_str.append(let)
-        new_str = ''.join(new_str)
-        
+        new_str = ''.join([(chr(ord(let) - i) if i <= shift_dict[let] 
+                       else chr(ord(let) + (26 - i))) for let in init_str])
         exp_count = {l: en_ics[l] * len(new_str) for l in new_str}
         chi_lst = [((new_str.count(l) - exp_count[l]) ** 2) / exp_count[l] for l in new_str]
         avg_chi_lst.append(sum(chi_lst) / len(chi_lst))
     key_cipher.append(alphabet[avg_chi_lst.index(min(avg_chi_lst))])
     s += 1
 key_cipher = ''.join(key_cipher)
-print(key_cipher)
 
 newstr, i = [], 0
 for char in rawtxt:
