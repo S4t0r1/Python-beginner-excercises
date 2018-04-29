@@ -11,12 +11,12 @@ en_ics = {letter: ic for letter, ic in zip(alphabet, en_ics_lst)}
 rawtxt = ''.join(line for line in open('input1.txt', 'r', encoding='utf8'))
 cleantxt = ''.join([c for c in rawtxt if c.isalpha()])
 
-ic_lst, all_periods_ics = [], []
-for i in range(1, 51):
+all_periods_ics = []
+for i in range(1, 20):
     period_sub_ics = []
     for y in range(i):
         sequence, ic_lst = cleantxt[y::i], []
-        if len(sequence) == 1:
+        if len(sequence) < 2:
             break
         ic_lst = [sequence.count(l) * (sequence.count(l) - 1) for l in alphabet]
         period_sub_ics.append(sum(ic_lst) / (len(sequence) * (len(sequence) - 1)))
