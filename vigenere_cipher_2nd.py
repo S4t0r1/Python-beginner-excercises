@@ -1,4 +1,3 @@
-
     
 def attack(inFile, outFile):
     alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -9,15 +8,16 @@ def attack(inFile, outFile):
                   0.061,  0.1047, 0.0246, 0.0092, 0.0154, 0.0017, 0.0198, 0.0008]
     en_ics = {letter: ic for letter, ic in zip(alphabet, en_ics_lst)}
 
-    rawtxt = ''.join(line for line in open(inFile, 'r', encoding='utf8'))
-    cleantxt = ''.join([c for c in rawtxt if c.isalpha()])
+    with open(inFile, 'r', encoding='utf8') as fi:
+        rawtxt = ''.join(line for line in fi)
+        cleantxt = ''.join([c for c in rawtxt if c.isalpha()])
 
     def getKeylen(x=0):
         all_periods_ics = []
-        for i in range(1, 51):
+        for period in range(1, 51):
             period_sub_ics = []
-            for y in range(i):
-                sequence, ic_lst = cleantxt[y::i], []
+            for start in range(period):
+                sequence, ic_lst = cleantxt[start::period], []
                 if len(sequence) < 2:
                     break
                 ic_lst = [sequence.count(l) * (sequence.count(l) - 1) for l in alphabet]
@@ -27,7 +27,7 @@ def attack(inFile, outFile):
                                                  if ic > sum(all_periods_ics) / len(all_periods_ics)])
         return keylen_candidates[x][0]
 
-    def getKeycipher(x=0):
+    def getKeycipher(x=0, z=0):
         keylen, start, key_cipher = getKeylen(x), 0, []
         while start < keylen:
             init_str, avg_chi_lst = cleantxt[start::keylen], []
@@ -37,12 +37,15 @@ def attack(inFile, outFile):
                 exp_count = {l: en_ics[l] * len(new_str) for l in new_str}
                 chi_lst = [((new_str.count(l) - exp_count[l]) ** 2) / exp_count[l] for l in new_str]
                 avg_chi_lst.append(sum(chi_lst) / len(chi_lst))
+            if z > 0:
+                for z in range(z):
+                    avg_chi_lst.remove(min(avg_chi_lst))
             key_cipher.append(alphabet[avg_chi_lst.index(min(avg_chi_lst))])
             start += 1
         return ''.join(key_cipher)
 
-    def decypher(x=0):
-        key_cipher, i, nextxt = getKeycipher(x), 0, []
+    def decypher(x=0, z=0):
+        key_cipher, i, nextxt = getKeycipher(x,z), 0, []
         print(key_cipher)
         for char in rawtxt:
             if char.isalpha():
@@ -53,11 +56,17 @@ def attack(inFile, outFile):
         return ''.join(nextxt)
 
     txt_ic, x = 0, 0
-    while txt_ic < 0.0625 or x < 10:
-        nextxt = decypher(x=x)
-        txt_ic_lst = [nextxt.count(c)/len(cleantxt) for c in nextxt if c.isalpha()]
-        txt_ic = sum(txt_ic_lst) / len(txt_ic_lst)
+    while txt_ic < 0.0645:
+        for z in range(3):
+            nextxt = decypher(x=x, z=z)
+            txt_ic_lst = [nextxt.count(c)/len(cleantxt) for c in nextxt if c.isalpha()]
+            txt_ic = sum(txt_ic_lst) / len(txt_ic_lst)
+            if txt_ic > 0.0645:
+                print(nextxt, '\ntext ic = {}'.format(txt_ic))
+                break
         x += 1
-        print(nextxt, '\ntext ic = {}'.format(txt_ic))
+    
+    with open(outFile, 'w', encoding='utf8') as fout:
+        fout.write(nextxt)
 
-attack('input1.txt', 'output.txt')
+attack('input1.txt', 'output.txt')    
