@@ -15,15 +15,20 @@ def attack(inFile, outFile):
         rawtxt = ''.join(line for line in fi)
         cleantxt = ''.join([c for c in rawtxt if c.isalpha()])
     
-    def getNgrams(ngramfile=None, ctxt=None):
-        ngrams_dict = {line.split()[0]: int(line.split()[1]) for line in open(ngramfile, 'r', encoding='utf8')}
+    def getNgrams(ngramData=None, ctxt=None, getDict=None):
+        ngrams_dict = ngramData if type(ngramData)==dict else {line.split()[0]: int(line.split()[1]) for line 
+                                                                    in open(ngramData, 'r', encoding='utf8')}
         N = sum(ngrams_dict.values())
-        for ngram, count in ngrams_dict.items():
-            ngrams_dict[ngram] = log10(float(count))/N
-        score, klength = 0, len(ngram)
-        for i in range(len(ctxt)-klength+1):
-            score += ngrams_dict[i:i+klength] if ctxt[i:i+klength] in ngrams_dict else score + log10(0.1/N)
-        return score
+        if type(ngramData)==str:
+            for ngram, count in ngrams_dict.items():
+                ngrams_dict[ngram] = log10(float(count))/N
+        if getDict:
+            return ngrams_dict
+        if ctxt:
+            score, klength = 0, len(list(ngrams_dict.keys())[-1])
+            for i in range(len(ctxt)-klength+1):
+                score += ngrams_dict[ctxt[i:i+klength]] if ctxt[i:i+klength] in ngrams_dict else score + log10(0.1/N)
+            return score
     
     def getKeylen(x=0):
         all_periods_ics = []
@@ -69,15 +74,20 @@ def attack(inFile, outFile):
             nextxt.append(char)
         return ''.join(nextxt)
     
-    def decipher_b(nBest=[]):
+    def decipher_b():
+        trigramDict = dict(getNgrams('english_trigrams.txt', getDict=True))
         for klen in range(3, 20):
-            nBest = sorted(nBest[:100], reversed=True) if len(nBest) > 0 else []
-            for i in permutations('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 3):
-                key = ''.join(i) + 'A'*(klen-len(i))
+            keyslst, nBest = sorted(list(trigramDict.keys())), []
+            for tki in range(keyslst.index('ABC'), len(keyslst)):
+                key = ''.join(keyslst[tki]) + 'A'*(klen-len(keyslst[tki]))
                 pt, score = decipher_a(key_cipher=key), 0
+                print(key)
                 print(pt)
                 for j in range(0, len(pt), klen):
-                    score += getNgrams('trigrams.txt', pt[j:j+klen])
+                    score += getNgrams(ngramData=trigramDict, ctxt=pt[j:j+klen].upper())
+                nBest.append([score,keyslst[tki]])
+                nBest = sorted(nBest[:100], reverse=True)
+            print(nBest, len(nBest))
     
     if len(cleantxt) > 350: 
         txt_ic, x = 0, 0
