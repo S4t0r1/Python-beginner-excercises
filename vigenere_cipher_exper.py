@@ -1,4 +1,7 @@
     
+from math import log10
+from itertools import permutations
+
 def attack(inFile, outFile):
     alphabet = "abcdefghijklmnopqrstuvwxyz"
     shift_dict = {letter: alphabet.index(letter) for letter in alphabet}
@@ -11,7 +14,18 @@ def attack(inFile, outFile):
     with open(inFile, 'r', encoding='utf8') as fi:
         rawtxt = ''.join(line for line in fi)
         cleantxt = ''.join([c for c in rawtxt if c.isalpha()])
-
+    
+    def getNgrams(ngramfile):
+        ngrams_dict = {line.split()[0]: int(line.split()[1]) for line in open(ngramfile, 'r', encoding='utf8')}
+        N = sum(ngrams_dict.values())
+        for ngram, count in ngrams_dict.items():
+            ngrams_dict[ngram] = log10(float(count))/N
+    
+        score, klength = 0, len(ngram)
+        for i in range(len(txt)-klength+1):
+            score = score + ngrams_dict[i:i+klength] if txt[i:i+klength] in ngrams_dict else score + log10(0.1/N)
+        return score
+    
     def getKeylen(x=0):
         all_periods_ics = []
         for period in range(1, 51):
@@ -24,14 +38,12 @@ def attack(inFile, outFile):
                 period_sub_ics.append(sum(ic_lst) / (len(sequence) * (len(sequence) - 1)))
             all_periods_ics.append(sum(period_sub_ics) / len(period_sub_ics))
         keylen_candidates = sorted([(keylen, ic) for keylen, ic in enumerate(all_periods_ics, start=1)
-                                    if ic > (sum(all_periods_ics) / len(all_periods_ics))*1.5])
+                                                 if ic > sum(all_periods_ics) / len(all_periods_ics)])
         return keylen_candidates[x][0]
 
     def getKeycipher(x=0, z=0):
         keylen, start, key_cipher = getKeylen(x), 0, []
-        print(keylen)
-        print('silmarillion', len('silmarillion'))
-        while start < keylen and len(cleantxt) > 100:
+        while start < keylen:
             init_str, avg_chi_lst = cleantxt[start::keylen], []
             for i in range(len(alphabet)):
                 new_str = ''.join([(chr(ord(let) - i) if i <= shift_dict[let] 
@@ -39,11 +51,14 @@ def attack(inFile, outFile):
                 exp_count = {l: en_ics[l] * len(new_str) for l in new_str}
                 chi_lst = [((new_str.count(l) - exp_count[l]) ** 2) / exp_count[l] for l in new_str]
                 avg_chi_lst.append(sum(chi_lst) / len(chi_lst))
+            if z > 0:
+                for z in range(z):
+                    avg_chi_lst.remove(min(avg_chi_lst))
             key_cipher.append(alphabet[avg_chi_lst.index(min(avg_chi_lst))])
             start += 1
         return ''.join(key_cipher)
 
-    def decypher(x=0, z=0):
+    def decypher_a(x=0, z=0):
         key_cipher, i, nextxt = getKeycipher(x,z), 0, []
         print(key_cipher)
         for char in rawtxt:
@@ -53,18 +68,27 @@ def attack(inFile, outFile):
                 i =  i + 1 if i < (len(key_cipher) - 1) else 0
             nextxt.append(char)
         return ''.join(nextxt)
-
-    txt_ic, x = 0, 0
-    while txt_ic < 0.0645:
-        for z in range(2):
-            nextxt = decypher(x=x, z=z)
-            txt_ic_lst = [nextxt.count(c)/len(cleantxt) for c in nextxt if c.isalpha()]
-            txt_ic = sum(txt_ic_lst) / len(txt_ic_lst)
-            print(nextxt, '\ntext ic = {}'.format(txt_ic))
-            if txt_ic > 0.0645:
-                with open(outFile, 'w', encoding='utf8') as fout:
-                    fout.write(nextxt)  
+    
+    def decypher_b():
+        for klen in range(3, 20):
+            nBest = [] if len(nBest)>0 else sort(nBest[:100], reversed=True)
+            keys = ' '.join(''.join(i) + 'A'*(klen-len(i)) for i in permutations('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 3))
+            pt = decypher_a()
+            
+    
+    if len(cleantxt) > 350: 
+        txt_ic, x = 0, 0
+        while txt_ic < 0.0645:
+            for z in range(3):
+                nextxt = decypher_a(x=x, z=z)
+                txt_ic_lst = [nextxt.count(c)/len(cleantxt) for c in nextxt if c.isalpha()]
+                txt_ic = sum(txt_ic_lst) / len(txt_ic_lst)
+                if txt_ic > 0.0645:
+                    print(nextxt, '\ntext ic = {}'.format(txt_ic))
                     break
-        x += 1
+            x += 1
+    
+    with open(outFile, 'w', encoding='utf8') as fout:
+        fout.write(nextxt)
 
 attack('input1.txt', 'output.txt')
