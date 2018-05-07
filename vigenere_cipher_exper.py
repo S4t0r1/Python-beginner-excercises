@@ -15,15 +15,14 @@ def attack(inFile, outFile):
         rawtxt = ''.join(line for line in fi)
         cleantxt = ''.join([c for c in rawtxt if c.isalpha()])
     
-    def getNgrams(ngramfile):
+    def getNgrams(ngramfile=None, ctxt=None):
         ngrams_dict = {line.split()[0]: int(line.split()[1]) for line in open(ngramfile, 'r', encoding='utf8')}
         N = sum(ngrams_dict.values())
         for ngram, count in ngrams_dict.items():
             ngrams_dict[ngram] = log10(float(count))/N
-    
         score, klength = 0, len(ngram)
-        for i in range(len(txt)-klength+1):
-            score = score + ngrams_dict[i:i+klength] if txt[i:i+klength] in ngrams_dict else score + log10(0.1/N)
+        for i in range(len(ctxt)-klength+1):
+            score += ngrams_dict[i:i+klength] if ctxt[i:i+klength] in ngrams_dict else score + log10(0.1/N)
         return score
     
     def getKeylen(x=0):
@@ -58,8 +57,9 @@ def attack(inFile, outFile):
             start += 1
         return ''.join(key_cipher)
 
-    def decypher_a(x=0, z=0):
-        key_cipher, i, nextxt = getKeycipher(x,z), 0, []
+    def decipher_a(x=0, z=0, key_cipher=None):
+        key_cipher = key_cipher.lower() or getKeycipher(x,z)
+        i, nextxt = 0, []
         print(key_cipher)
         for char in rawtxt:
             if char.isalpha():
@@ -69,24 +69,30 @@ def attack(inFile, outFile):
             nextxt.append(char)
         return ''.join(nextxt)
     
-    def decypher_b():
+    def decipher_b(nBest=[]):
         for klen in range(3, 20):
-            nBest = [] if len(nBest)>0 else sort(nBest[:100], reversed=True)
-            keys = ' '.join(''.join(i) + 'A'*(klen-len(i)) for i in permutations('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 3))
-            pt = decypher_a()
-            
+            nBest = sorted(nBest[:100], reversed=True) if len(nBest) > 0 else []
+            for i in permutations('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 3):
+                key = ''.join(i) + 'A'*(klen-len(i))
+                pt, score = decipher_a(key_cipher=key), 0
+                print(pt)
+                for j in range(0, len(pt), klen):
+                    score += getNgrams('trigrams.txt', pt[j:j+klen])
     
     if len(cleantxt) > 350: 
         txt_ic, x = 0, 0
         while txt_ic < 0.0645:
             for z in range(3):
-                nextxt = decypher_a(x=x, z=z)
+                nextxt = decipher_a(x=x, z=z)
                 txt_ic_lst = [nextxt.count(c)/len(cleantxt) for c in nextxt if c.isalpha()]
                 txt_ic = sum(txt_ic_lst) / len(txt_ic_lst)
                 if txt_ic > 0.0645:
                     print(nextxt, '\ntext ic = {}'.format(txt_ic))
                     break
             x += 1
+    else:
+        decipher_b()
+        
     
     with open(outFile, 'w', encoding='utf8') as fout:
         fout.write(nextxt)
